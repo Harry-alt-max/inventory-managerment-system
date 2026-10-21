@@ -7,5 +7,7 @@ app_name = "api"
 
 urlpatterns = [
     path("", include(("accounts.urls", "accounts"), namespace="accounts")),
+    path("", include(("catalog.urls", "catalog"), namespace="catalog")),
+    path("", include(("stock.urls", "stock"), namespace="stock")),
     re_path(r"^.*$", ApiNotFoundView.as_view(), name="not-found"),
 ]

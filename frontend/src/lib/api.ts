@@ -30,6 +30,61 @@ export interface AuthUser {
   roles: string[];
 }
 
+export interface Item {
+  item_code: string;
+  name: string;
+  supplier_name: string;
+  suggested_price: string;
+  expected_margin: string;
+}
+
+export interface Batch {
+  po_number: string;
+  item_code: string;
+  item_name: string;
+  supplier_name: string;
+  unit_price: string;
+  quantity: number;
+  total: string;
+  received_at: string;
+}
+
+export interface Warehouse {
+  code: string;
+  name: string;
+}
+
+export interface Location {
+  code: string;
+  name: string;
+  warehouse_code: string;
+}
+
+export interface StockRow {
+  item_code: string;
+  item_name: string;
+  location_code: string;
+  location_name: string;
+  warehouse_code: string;
+  warehouse_name: string;
+  quantity: number;
+  updated_at: string;
+}
+
+export interface Movement {
+  id: number;
+  item_code: string;
+  item_name: string;
+  location_code: string;
+  warehouse_code: string;
+  batch_po_number: string | null;
+  quantity: number;
+  purpose: string;
+  actor_username: string;
+  occurred_at: string;
+  note: string;
+}
+
 export class ApiError extends Error {
   readonly code: string;
   readonly status: number;
@@ -136,4 +191,107 @@ export async function fetchCurrentUser(signal?: AbortSignal): Promise<AuthUser |
     if (error instanceof ApiError && error.status === 401) return null;
     throw error;
   }
+}
+
+// ---------------------------------------------------------------------------
+// 寫入型呼叫（需要 CSRF token）
+// ---------------------------------------------------------------------------
+
+async function postJson<T>(path: string, body: unknown): Promise<T> {
+  const token = readCsrfToken() || (await fetchCsrfToken());
+  return apiFetch<T>(path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-CSRFToken": token },
+    body: JSON.stringify(body),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// 商品主檔、批次、倉庫與位置
+// ---------------------------------------------------------------------------
+
+export async function fetchItems(query = ""): Promise<Item[]> {
+  const suffix = query ? `?query=${encodeURIComponent(query)}` : "";
+  const payload = await apiFetch<{ items: Item[] }>(`/items${suffix}`);
+  return payload.items;
+}
+
+export async function createItem(input: {
+  name: string;
+  supplier_name: string;
+  suggested_price: string;
+  expected_margin: string;
+}): Promise<Item> {
+  const payload = await postJson<{ item: Item }>("/items", input);
+  return payload.item;
+}
+
+export async function fetchBatches(): Promise<Batch[]> {
+  const payload = await apiFetch<{ batches: Batch[] }>("/batches");
+  return payload.batches;
+}
+
+export async function createBatch(input: {
+  item_code: string;
+  supplier_name: string;
+  unit_price: string;
+  quantity: number;
+  received_at: string;
+}): Promise<Batch> {
+  const payload = await postJson<{ batch: Batch }>("/batches", input);
+  return payload.batch;
+}
+
+export async function fetchWarehouses(): Promise<Warehouse[]> {
+  const payload = await apiFetch<{ warehouses: Warehouse[] }>("/warehouses");
+  return payload.warehouses;
+}
+
+export async function createWarehouse(input: { code: string; name: string }): Promise<Warehouse> {
+  const payload = await postJson<{ warehouse: Warehouse }>("/warehouses", input);
+  return payload.warehouse;
+}
+
+export async function fetchLocations(warehouseCode: string): Promise<Location[]> {
+  const payload = await apiFetch<{ locations: Location[] }>(
+    `/warehouses/${encodeURIComponent(warehouseCode)}/locations`,
+  );
+  return payload.locations;
+}
+
+export async function createLocation(
+  warehouseCode: string,
+  input: { code: string; name: string },
+): Promise<Location> {
+  const payload = await postJson<{ location: Location }>(
+    `/warehouses/${encodeURIComponent(warehouseCode)}/locations`,
+    input,
+  );
+  return payload.location;
+}
+
+// ---------------------------------------------------------------------------
+// 庫存現況、异動與入庫
+// ---------------------------------------------------------------------------
+
+export async function fetchStock(query = ""): Promise<StockRow[]> {
+  const suffix = query ? `?query=${encodeURIComponent(query)}` : "";
+  const payload = await apiFetch<{ stock: StockRow[] }>(`/stock${suffix}`);
+  return payload.stock;
+}
+
+export async function fetchMovements(): Promise<Movement[]> {
+  const payload = await apiFetch<{ movements: Movement[] }>("/stock/movements");
+  return payload.movements;
+}
+
+export async function createInbound(input: {
+  item_code: string;
+  location_code: string;
+  batch_po_number: string;
+  quantity: number;
+  note?: string;
+}): Promise<Movement> {
+  const payload = await postJson<{ movement: Movement }>("/stock/inbound", input);
+  return payload.movement;
 }

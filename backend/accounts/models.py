@@ -52,6 +52,8 @@ class User(AbstractUser):
             # 寫入
             ("manage_supplier", "供應商維護"),
             ("manage_batch", "採購批次建立"),
+            ("manage_item", "商品主檔維護"),
+            ("manage_warehouse", "倉庫與庫存位置維護"),
             ("manage_replenishment", "水位設定"),
             ("manage_accounts", "帳號與角色指派"),
             ("create_stock_inbound", "入庫作業"),

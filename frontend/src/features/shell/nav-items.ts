@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Boxes, LayoutDashboard, Package, Receipt, Settings, Users } from "lucide-react";
+import { Boxes, LayoutDashboard, Package, PackagePlus, Receipt, Settings, Users } from "lucide-react";
 
 import type { MessageKey } from "../../i18n";
 
@@ -37,15 +37,23 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.catalog",
     icon: Package,
     group: "management",
-    implemented: false,
+    implemented: true,
     roles: ["warehouse", "purchasing"],
+  },
+  {
+    key: "inbound",
+    labelKey: "nav.inbound",
+    icon: PackagePlus,
+    group: "management",
+    implemented: true,
+    roles: ["warehouse"],
   },
   {
     key: "stock",
     labelKey: "nav.stock",
     icon: Boxes,
     group: "management",
-    implemented: false,
+    implemented: true,
     roles: ["warehouse"],
   },
   {

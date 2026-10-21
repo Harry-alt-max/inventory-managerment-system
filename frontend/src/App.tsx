@@ -5,8 +5,11 @@ import { useAuth } from "./features/auth";
 import { AppShell, NAV_ITEMS } from "./features/shell";
 import type { NavItem } from "./features/shell";
 import { useI18n } from "./i18n";
+import { CatalogPage } from "./pages/CatalogPage";
 import { HomePage } from "./pages/HomePage";
+import { InboundPage } from "./pages/InboundPage";
 import { LoginPage } from "./pages/LoginPage";
+import { StockPage } from "./pages/StockPage";
 
 export default function App() {
   const { t } = useI18n();
@@ -30,6 +33,31 @@ export default function App() {
     setActiveKey(item.key);
   }
 
+  const page = (() => {
+    switch (activeItem.key) {
+      case "catalog":
+        return <CatalogPage />;
+      case "inbound":
+        return <InboundPage />;
+      case "stock":
+        return <StockPage />;
+      case "dashboard":
+        return <HomePage />;
+      default:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("nav.placeholder.title")}</CardTitle>
+              <CardDescription>{t("nav.placeholder.description")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <span className="text-sm text-fg-secondary">{t(activeItem.labelKey)}</span>
+            </CardContent>
+          </Card>
+        );
+    }
+  })();
+
   return (
     <AppShell
       title={t(activeItem.labelKey)}
@@ -37,19 +65,7 @@ export default function App() {
       activeKey={activeItem.key}
       onSelectNav={handleSelect}
     >
-      {activeItem.implemented ? (
-        <HomePage />
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("nav.placeholder.title")}</CardTitle>
-            <CardDescription>{t("nav.placeholder.description")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <span className="text-sm text-fg-secondary">{t(activeItem.labelKey)}</span>
-          </CardContent>
-        </Card>
-      )}
+      {page}
     </AppShell>
   );
 }

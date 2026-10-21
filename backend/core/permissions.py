@@ -34,9 +34,11 @@ PRD FR-2 權限矩陣對應（✔ = 允許、— = 不允許）：
 - **會計可唯讀檢視銷貨紀錄**：FR-2 的「毛利與成本檢視 ✔（會計）」與 UJ-4
   （會計逐筆核對銷貨的折後金額、成本與毛利）都要求看得到銷貨紀錄，因此會計
   另給唯讀的 ``view_sales_order``；它拿不到任何寫入 permission（AD-5）。
-- **商品主檔／倉庫位置的寫入權限不在本 story**：FR-2 矩陣只涵蓋「商品與庫存
-  查詢」，FR-4（建商品主檔）與 FR-10（倉庫與位置）屬於 catalog epic，屆時
-  再依 FR-4／FR-10 的敘述補上對應的寫入 permission，並更新本模組。
+- **商品主檔與倉庫位置的寫入權限**：FR-2 矩陣只涵蓋「商品與庫存查詢」，
+  FR-4（建立商品主檔）、FR-9（採購批次）與 FR-10（倉庫與庫存位置）屬於
+  catalog epic，因此這裡補上 ``manage_item``、``manage_batch``（既有）與
+  ``manage_warehouse``，並依敘述把 FR-4 給倉管與採購、FR-9／FR-10 給採購
+  與倉管；會計維持唯讀。
 """
 from __future__ import annotations
 
@@ -61,6 +63,8 @@ PERM_VIEW_MARGIN = "accounts.view_margin"
 # 寫入權限
 PERM_MANAGE_SUPPLIER = "accounts.manage_supplier"
 PERM_MANAGE_BATCH = "accounts.manage_batch"
+PERM_MANAGE_ITEM = "accounts.manage_item"
+PERM_MANAGE_WAREHOUSE = "accounts.manage_warehouse"
 PERM_MANAGE_REPLENISHMENT = "accounts.manage_replenishment"
 PERM_MANAGE_ACCOUNTS = "accounts.manage_accounts"
 PERM_CREATE_STOCK_INBOUND = "accounts.create_stock_inbound"
@@ -81,6 +85,8 @@ ALL_PERMISSIONS: tuple[str, ...] = (
     PERM_VIEW_MARGIN,
     PERM_MANAGE_SUPPLIER,
     PERM_MANAGE_BATCH,
+    PERM_MANAGE_ITEM,
+    PERM_MANAGE_WAREHOUSE,
     PERM_MANAGE_REPLENISHMENT,
     PERM_MANAGE_ACCOUNTS,
     PERM_CREATE_STOCK_INBOUND,
@@ -117,18 +123,24 @@ ROLE_GROUP_NAMES: dict[str, str] = {
 #: 角色代碼 → 權限集合（PRD FR-2 的權限矩陣）
 ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
     # 倉管：商品與庫存查詢、入庫／領用／移轉、調貨單唯讀可見、帳號與角色指派
+    #      （FR-4 建商品主檔、FR-9 建採購批次、FR-10 倉庫與位置）
     ROLE_WAREHOUSE: frozenset(
         {
             PERM_VIEW_CATALOG,
             PERM_VIEW_STOCK,
+            PERM_VIEW_BATCH,
             PERM_VIEW_TRANSFER_ORDER,
             PERM_CREATE_STOCK_INBOUND,
             PERM_CREATE_STOCK_ISSUE,
             PERM_CREATE_STOCK_TRANSFER,
             PERM_MANAGE_ACCOUNTS,
+            PERM_MANAGE_ITEM,
+            PERM_MANAGE_BATCH,
+            PERM_MANAGE_WAREHOUSE,
         }
     ),
     # 採購：商品與庫存查詢、供應商與採購批次、水位與待補貨清單（含設定）
+    #      （FR-4 建商品主檔、FR-9 建採購批次、FR-10 倉庫與位置）
     ROLE_PURCHASING: frozenset(
         {
             PERM_VIEW_CATALOG,
@@ -137,6 +149,8 @@ ROLE_PERMISSIONS: dict[str, frozenset[str]] = {
             PERM_VIEW_BATCH,
             PERM_MANAGE_SUPPLIER,
             PERM_MANAGE_BATCH,
+            PERM_MANAGE_ITEM,
+            PERM_MANAGE_WAREHOUSE,
             PERM_VIEW_REPLENISHMENT,
             PERM_MANAGE_REPLENISHMENT,
         }
