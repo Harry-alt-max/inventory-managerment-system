@@ -22,6 +22,9 @@ dist/
 .env
 .env.local
 
+# 含密碼的本機文件（測試帳號）
+測試帳號.md
+
 # 編輯器與作業系統
 .vscode/
 .idea/
