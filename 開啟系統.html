@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>庫存管理系統</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #f6f1e7;
+        color: #2c2620;
+        font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+      }
+      .card {
+        max-width: 34rem;
+        padding: 2rem 2.5rem;
+        border: 1px solid #e0d6c2;
+        border-radius: 12px;
+        background: #fffdf8;
+        box-shadow: 0 1px 2px rgba(44, 38, 32, 0.06), 0 4px 12px rgba(44, 38, 32, 0.05);
+      }
+      h1 { margin: 0 0 0.5rem; font-size: 1.5rem; }
+      p { margin: 0 0 1rem; line-height: 1.6; color: #574e3e; }
+      code {
+        background: #f3ebe0; border-radius: 4px; padding: 0.1rem 0.35rem;
+        font-family: Consolas, monospace; font-size: 0.9em; color: #8c4a0f;
+      }
+      .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem; }
+      a.button {
+        display: inline-block; padding: 0.55rem 1.1rem; border-radius: 6px;
+        background: #8c4a0f; color: #fff6e8; text-decoration: none; font-size: 0.95rem;
+      }
+      a.secondary { background: #f3ebe0; color: #8c4a0f; }
+      #status { margin-top: 1rem; font-size: 0.9rem; color: #8a7f6a; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>庫存管理系統</h1>
+      <p>
+        這是一個網頁系統（後端 Django ＋ 前端 React），畫面要在瀏覽器裡看。
+        第一次使用請先在這個資料夾雙擊 <code>啟動系統.bat</code>，
+        它會啟動前後端並自動開啟瀏覽器。
+      </p>
+      <div class="actions">
+        <a class="button" href="http://127.0.0.1:5173">開啟系統</a>
+        <a class="button secondary" href="http://127.0.0.1:8000/api/v1/health">檢查後端狀態</a>
+      </div>
+      <p id="status">正在檢查服務是否啟動…</p>
+    </div>
+
+    <script>
+      const status = document.getElementById("status");
+      fetch("http://127.0.0.1:8000/api/v1/health")
+        .then((response) => response.json())
+        .then((data) => {
+          status.textContent = `後端已啟動（版本 ${data.version}）。`;
+        })
+        .catch(() => {
+          status.textContent = "後端尚未啟動：請雙擊「啟動系統.bat」。";
+        });
+    </script>
+  </body>
+</html>
