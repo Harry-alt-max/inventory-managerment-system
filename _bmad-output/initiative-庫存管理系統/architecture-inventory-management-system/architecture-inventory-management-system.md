@@ -267,6 +267,8 @@ graph LR
 | @vitejs/plugin-react | 6.1.2 |
 | React / React-DOM | 19.3.1 |
 | @tanstack/react-query | 5.104.5 |
+| tailwindcss / @tailwindcss/vite | 4.3.3 |
+| lucide-react | 1.61.0 |
 | TypeScript | 5.9.3 |
 | pytest | 9.1.1 |
 | pytest-django | 4.14.0 |

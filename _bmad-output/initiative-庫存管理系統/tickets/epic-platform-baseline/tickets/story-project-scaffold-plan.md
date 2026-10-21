@@ -3,14 +3,14 @@ title: '專案骨架與第一次連線打通'
 type: 'feature'
 ticket: '1'
 created: '2026-10-21'
-status: 'draft'
-baseline_revision: 'a162a19d2cde1e82eabc6da5b3882924cce95b72'
+status: 'built'
+baseline_revision: '2b63f7f24f8b37974bca8acaf52892cf34bb5c2f'
 route: 'full'
 route_source: 'auto'
 risk: 'medium'
-review: ''
-review_source: ''
-lenses_ran: []
+review: 'quick'
+review_source: 'pinned'
+lenses_ran: ['quick']
 review_loop_iteration: 0
 context: ["{project-root}/_bmad-output/initiative-庫存管理系統/architecture-inventory-management-system/architecture-inventory-management-system.md", "{project-root}/_bmad-output/initiative-庫存管理系統/ux-inventory-management-system/DESIGN.md"]
 ---
@@ -55,7 +55,7 @@ context: ["{project-root}/_bmad-output/initiative-庫存管理系統/architectur
 - `backend/core/{exceptions,handler}.py` — 領域例外與單一 DRF exception handler
 - `backend/config/{urls,wsgi}.py` — 掛 `/api/v1/`、WhiteNoise、admin
 - `backend/accounts/` — Django auth 的 User／Group 與第一組 migration
-- `frontend/{package.json,vite.config.ts,tailwind.config.ts,src/index.css}` — 依賴、dev proxy、token 落地
+- `frontend/{package.json,vite.config.ts,src/index.css}` — 依賴、dev proxy、token 落地（Tailwind v4 以 CSS `@theme` 定義，不使用 `tailwind.config.ts`）
 - `frontend/src/{i18n/,features/shell/,pages/HomePage.tsx}` — catalog、外框、版本字串頁
 - `README.md` — hitl 步驟（建 venv、裝依賴、migrate、起前後端）
 - 不得修改：`_bmad-output/**`、`AGENTS.md`、`PostgreSQL使用說明.md`
@@ -69,9 +69,9 @@ context: ["{project-root}/_bmad-output/initiative-庫存管理系統/architectur
 - [ ] `backend/config/{urls,wsgi}.py` — 掛 `/api/v1/`、WhiteNoise、admin
 - [ ] `backend/accounts/` — auth 的 User／Group 與第一組 migration
 - [ ] `backend/accounts/views.py` — `GET /api/v1/health` 回 status 與 version
-- [ ] `frontend/package.json` — vite 8.3.4、react 19.3.1、@tanstack/react-query 5.104.5、typescript 5.9.3、tailwind 4、shadcn 相依
+- [ ] `frontend/package.json` — vite 8.3.4、react 19.3.1、@tanstack/react-query 5.104.5、typescript 5.9.3、tailwindcss + @tailwindcss/vite 4.3.3、lucide-react 1.61.0
 - [ ] `frontend/vite.config.ts` — `/api` proxy 至 `http://127.0.0.1:8000`
-- [ ] `frontend/tailwind.config.ts`、`frontend/src/index.css` — `DESIGN.md` token 落成 CSS 變數
+- [ ] `frontend/src/index.css` — Tailwind v4 `@theme` 落 `DESIGN.md` token 成 CSS 變數
 - [ ] `frontend/src/i18n/` — catalog 與切換，缺翻譯 fallback zh-TW
 - [ ] `frontend/src/features/shell/` — 側欄、頂列、使用者選單
 - [ ] `frontend/src/pages/HomePage.tsx` — 以 TanStack Query 取 health 顯示版本字串；後端不可達時顯示錯誤與重試
@@ -89,10 +89,30 @@ context: ["{project-root}/_bmad-output/initiative-庫存管理系統/architectur
 
 - 本 story 驗收為手動（啟動前後端看版本字串）；自動化測試骨架於 story 7 建立，故本計畫不含 pytest 任務。
 - 正式部署（waitress + build 產物）的實際啟動驗證縮減至後續 story，本 story 只備妥設定。
+- 環境陷阱：`PGPASSFILE` 只在使用者層設定，當前行程的 process 層為空——執行 `manage.py`、`psql` 等需要連線的指令前，先在該 shell 設定 `$env:PGPASSFILE='C:\Users\user\Desktop\pgpass.conf'`。
+- 前端 `npm install` 與後端 `uv venv`／`uv pip install` 需要網路；`shadcn/ui` 元件以手動 minimal 方式建立（不跑 shadcn CLI），token 一律對齊 `DESIGN.md`。
+- **補上自動化測試（超出原計畫，因 build 流程的 Matrix Test Audit 要求矩陣每列都有跑過的測試）**：新增 `backend/requirements-dev.txt`（pytest 9.1.1、pytest-django 4.14.0、factory-boy 3.3.3，版本取自 spine Stack）、`backend/pytest.ini`、`backend/tests/test_api_contract.py`、`backend/tests/test_settings_guards.py`，共 9 個測試全數通過，覆蓋矩陣第 1（health 200／DB 不可連 503）、第 2（未知路徑 404 統一包絡）、第 4（缺 SECRET_KEY／PGPASSFILE 啟動即失敗）三列；測試使用獨立測試庫 `AILearn_test`，不連 `AILearn`。
+- 矩陣第 3 列（前端首頁）目前以**手動驗證**覆蓋：啟動 Vite dev server 與 Django 後，`/api/v1/health` 經 proxy 回 200 JSON，首頁顯示後端版本字串；停止後端後 proxy 回 502／ECONNREFUSED，前端映射為 `network.unreachable` 並顯示錯誤卡與重試鈕。前端自動化測試待 story 7 決定測試工具後補上。
+- 首次執行測試時有 2 個失敗（DB 存取未加 `django_db` 標記、prod 檢查順序先撞 `DB_NAME` 而非 `PGPASSFILE`），已修正後通過。
+- 實作代理另說明兩處與計畫的差異：`AUTH_USER_MODEL` 改為 `accounts.User` 但資料表沿用 `auth_user`（讓 accounts 擁有第一組 migration 又維持慣例表名）；WhiteNoise 以 middleware 掛載而非包在 `wsgi.py` 外層。兩者皆不違反 spine，已接受。
 
 ## Plan Change Log
 
 ## Review Triage Log
+
+| # | 位置 | 發現 | 判定 | 證據 | 路由 |
+|---|---|---|---|---|---|
+| 1 | `backend/config/urls.py:25-29` | `spa_fallback` catch-all 會把 `/assets/*` 也回成 index.html，正式環境 JS/CSS 載不到；`/api/v2/*` 誤回 200 HTML | **high** | `frontend/dist/index.html` 引用 `/assets/index-*.js`；`STATICFILES_DIRS=[]` 且 `frontend/dist` 不在 `STATIC_ROOT` 下，WhiteNoise 無從供應；catch-all 在字串層即命中 | patch |
+| 2 | `backend/config/settings/base.py:142` | `CompressedManifestStaticFilesStorage` 未跑 `collectstatic` 前 `/admin/` 拋 `Missing staticfiles manifest entry` | **medium** | Django admin 模板經 `{% static %}` 解析；`test.py` 已降級但 `dev.py`/`prod.py` 走 base | patch |
+| 3 | `backend/config/settings/prod.py:55-57` | `SECURE_SSL_REDIRECT` 預設開啟且 `SESSION_COOKIE_SECURE`/`CSRF_COOKIE_SECURE` 硬寫 True，本機純 HTTP 的正式環境全部 301 到無人接管的 https，session/CSRF cookie 也不會回送 | **high** | spine 環境表：正式（本機）= waitress + WhiteNoise，純 HTTP；README 未列 `SECURE_SSL_REDIRECT` | patch |
+| 4 | diff 動到 `_bmad-output/**` | 違反計畫 Code Map 的「不得修改 `_bmad-output/**`」 | **false** | 動到的是 spine 的 Stack 補版本、計畫本身的 status/Code Map/task 行——皆為 build 流程中父層（我）的計畫與 spine 維護，非實作者所為；實作者未動任何 `_bmad-output` 檔案 | — |
+| 5 | `backend/tests/**`、README | 測試檔不在該份 diff（diff 產生於我補測試之前）、測試數 9→8、README 未寫測試步驟、pytest 需先匯出 `PGPASSFILE` | **部分 false / low** | 測試數：pytest 實跑輸出 `9 passed`（參數化計 2 次），敘述正確；diff 過期已由重產 diff 修正。README 缺測試步驟與 `PGPASSFILE` 提示為真 | patch（僅 README 部分） |
+| 6 | `frontend/src/i18n/catalog.ts:56-67` | 後端可回的多個錯誤碼（`request.method_not_allowed`、`request.not_acceptable`、`request.unsupported_media_type`、`request.throttled`、`resource.duplicate`、`stock.insufficient`）在 catalog 無對應條目，落到 `error.unknown` | **medium** | `core/handler.py:39-51` 與 `core/exceptions.py:84-97` 的碼集合 ⊄ catalog 的 `error.*` 鍵 | patch |
+| 7 | `frontend/src/features/shell/Sidebar.tsx:24`、`UserMenu.tsx:34,48`、`HomePage.tsx:56` | 元件內硬寫可見字串（`庫`、`U`、`—`），未走 message catalog | **low** | AD-33：所有使用者可見字串一律來自 catalog | patch |
+| 8 | `frontend/src/features/shell/Sidebar.tsx:21`、`frontend/index.html:5` | 側欄固定 `w-58` 無 1024–1279px 圖示列變體；viewport 釘 `width=1280` 使該區間永遠不會出現 | **medium** | DESIGN.md 斷點行為表要求 1024–1279px 摺疊為圖示列 | patch |
+| 9 | `frontend/src/pages/HomePage.tsx:55` | 後端版本字串用了 `text-accent-text`，而該 token 依 DESIGN.md 只供「毛利數值文字」 | **low** | DESIGN.md Colors 表：`accent-text` 用途為毛利數值文字 | patch |
+| 10 | 計畫 Implementation Notes | 宣稱的測試與該份 diff 不符 | **false** | 見 #5：diff 過期，非宣稱不實 | — |
+| 11 | diff 產物 | diff 中文字為亂碼 | **產物問題** | `git diff \| Out-File` 經 PowerShell 以主控台編碼重編碼；改用 `git diff --output` 直接寫原始位元組即修正 | 已修（重產 diff） |
 
 ## Design Notes
 

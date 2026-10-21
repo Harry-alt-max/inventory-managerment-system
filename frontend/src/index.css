@@ -1,0 +1,195 @@
+@import "tailwindcss";
+
+/* 深色模式以 class 切換（DESIGN.md：深色模式是同一組語意角色的另一組取值） */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ===========================================================================
+   DESIGN.md token —— 明亮工作台（Bright Workbench）／倉庫琥珀
+   淺色與深色各一組；元件一律引用語意 token，不得直接寫色碼。
+   =========================================================================== */
+:root {
+  /* {colors.background} */
+  --app-background: #f6f1e7;
+  /* {colors.surface} */
+  --app-surface: #fffdf8;
+  /* {colors.surface-raised} */
+  --app-surface-raised: #ffffff;
+  /* {colors.border} */
+  --app-border: #e0d6c2;
+  /* {colors.border-strong} */
+  --app-border-strong: #94856a;
+  /* {colors.text-primary} */
+  --app-fg: #2c2620;
+  /* {colors.text-secondary} */
+  --app-fg-secondary: #574e3e;
+  /* {colors.text-muted} */
+  --app-fg-muted: #6e6553;
+  /* {colors.primary} */
+  --app-primary: #8c4a0f;
+  /* {colors.primary-foreground} */
+  --app-primary-fg: #fff6e8;
+  /* {colors.primary-tint} */
+  --app-primary-tint: #f3ebe0;
+  /* {colors.success} */
+  --app-success: #41701f;
+  /* {colors.success-tint} */
+  --app-success-tint: #edf2e4;
+  /* {colors.warning} */
+  --app-warning: #8a6200;
+  /* {colors.warning-tint} */
+  --app-warning-tint: #f7f0df;
+  /* {colors.danger} */
+  --app-danger: #a33524;
+  /* {colors.danger-tint} */
+  --app-danger-tint: #f5e9e2;
+  /* {colors.info} */
+  --app-info: #1f6d8c;
+  /* {colors.info-tint} */
+  --app-info-tint: #e8eeed;
+  /* {colors.accent} */
+  --app-accent: #d98324;
+  /* {colors.accent-text} */
+  --app-accent-text: #9e5708;
+  /* {colors.accent-tint} */
+  --app-accent-tint: #fbeedd;
+  /* {colors.muted-tint} */
+  --app-muted-tint: #f1ede4;
+}
+
+.dark {
+  /* {colors.background-dark} */
+  --app-background: #14100b;
+  /* {colors.surface-dark} */
+  --app-surface: #1d1812;
+  /* {colors.surface-raised-dark} */
+  --app-surface-raised: #262018;
+  /* {colors.border-dark} */
+  --app-border: #3a3025;
+  /* {colors.border-strong-dark} */
+  --app-border-strong: #857459;
+  /* {colors.text-primary-dark} */
+  --app-fg: #f0e7d8;
+  /* {colors.text-secondary-dark} */
+  --app-fg-secondary: #c4b7a3;
+  /* {colors.text-muted-dark} */
+  --app-fg-muted: #a3967f;
+  /* {colors.primary-dark} */
+  --app-primary: #e09a4a;
+  /* {colors.primary-foreground-dark} */
+  --app-primary-fg: #1a1209;
+  /* {colors.primary-tint-dark} */
+  --app-primary-tint: #33240f;
+  /* {colors.success-dark} */
+  --app-success: #8fbf55;
+  /* {colors.success-tint-dark} */
+  --app-success-tint: #232b14;
+  /* {colors.warning-dark} */
+  --app-warning: #e0b33f;
+  /* {colors.warning-tint-dark} */
+  --app-warning-tint: #2e2610;
+  /* {colors.danger-dark} */
+  --app-danger: #e8776a;
+  /* {colors.danger-tint-dark} */
+  --app-danger-tint: #331c16;
+  /* {colors.info-dark} */
+  --app-info: #59a8c9;
+  /* {colors.info-tint-dark} */
+  --app-info-tint: #142a33;
+  /* {colors.accent-dark} */
+  --app-accent: #f0b75e;
+  /* {colors.accent-text-dark} */
+  --app-accent-text: #f0b75e;
+  /* {colors.accent-tint-dark} */
+  --app-accent-tint: #33240f;
+  /* {colors.muted-tint-dark} */
+  --app-muted-tint: #2a251c;
+}
+
+@theme {
+  /* 色彩：對應 DESIGN.md {colors.*} */
+  --color-background: var(--app-background);
+  --color-surface: var(--app-surface);
+  --color-surface-raised: var(--app-surface-raised);
+  --color-border: var(--app-border);
+  --color-border-strong: var(--app-border-strong);
+  --color-fg: var(--app-fg);
+  --color-fg-secondary: var(--app-fg-secondary);
+  --color-fg-muted: var(--app-fg-muted);
+  --color-primary: var(--app-primary);
+  --color-primary-fg: var(--app-primary-fg);
+  --color-primary-tint: var(--app-primary-tint);
+  --color-success: var(--app-success);
+  --color-success-tint: var(--app-success-tint);
+  --color-warning: var(--app-warning);
+  --color-warning-tint: var(--app-warning-tint);
+  --color-danger: var(--app-danger);
+  --color-danger-tint: var(--app-danger-tint);
+  --color-info: var(--app-info);
+  --color-info-tint: var(--app-info-tint);
+  --color-accent: var(--app-accent);
+  --color-accent-text: var(--app-accent-text);
+  --color-accent-tint: var(--app-accent-tint);
+  --color-muted-tint: var(--app-muted-tint);
+
+  /* 字體：{typography.fontFamily.*} */
+  --font-sans: "Inter", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* 字級：{typography.fontSize.*} */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-xxl: 26px;
+
+  /* 行高：{typography.lineHeight.*} */
+  --leading-tight: 1.35;
+  --leading-normal: 1.55;
+
+  /* 圓角：{rounded.*} */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* 間距基準：{spacing.base} 4px（scale-1 ～ scale-7 由此推導） */
+  --spacing: 4px;
+
+  /* 陰影：{components.卡片.shadow} / {components.卡片.shadow-raised} */
+  --shadow-card: 0 1px 2px rgba(44, 38, 32, 0.06), 0 4px 12px rgba(44, 38, 32, 0.05);
+  --shadow-raised: 0 2px 4px rgba(44, 38, 32, 0.08), 0 12px 28px rgba(44, 38, 32, 0.08);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--app-background);
+    color: var(--app-fg);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 焦點：{components.焦點.ring} */
+  :focus-visible {
+    outline: 2px solid var(--app-primary);
+    outline-offset: 2px;
+  }
+
+  /* 數字與金額一律等寬數字 */
+  .tabular-nums,
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+}

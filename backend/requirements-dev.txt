@@ -1,0 +1,4 @@
+# 開發與測試用相依（不進正式環境；版本取自架構 spine 的 Stack）
+pytest==9.1.1
+pytest-django==4.14.0
+factory-boy==3.3.3
