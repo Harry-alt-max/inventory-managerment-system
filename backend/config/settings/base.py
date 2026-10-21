@@ -154,10 +154,13 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "core.handler.exception_handler",
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "DEFAULT_PARSER_CLASSES": ["rest_framework.parsers.JSONParser"],
-    # 本 story 不實作登入與權限（story 2～6），先採預設 session 驗證、全數放行。
+    # 認證採 session（AD-6）：Django session cookie + CSRF token 是唯一機制。
+    # 未認證的請求一律回 401 auth.unauthenticated、越權回 403 auth.forbidden
+    # （由 core.permissions 的 permission class 丟出領域例外）。
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
     ],
+    # 預設放行；各 view 自行宣告需要的權限（AD-5）
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
 }
 

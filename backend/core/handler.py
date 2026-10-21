@@ -81,6 +81,12 @@ def error_response(
 
 
 def _code_for(exc: Exception, status: int) -> str:
+    # DRF 的 SessionAuthentication 在 CSRF 失敗時丟出 PermissionDenied，
+    # detail 以 "CSRF Failed" 開頭；此處改用較精確的 code（AD-6、AD-17）。
+    detail = getattr(exc, "detail", None)
+    if isinstance(detail, str) and detail.startswith("CSRF Failed"):
+        return "auth.csrf_failed"
+
     for exc_type, code in _CODE_BY_EXCEPTION:
         if isinstance(exc, exc_type):
             return code

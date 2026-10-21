@@ -102,3 +102,38 @@ class DatabaseUnavailable(DomainError):
     code = "db.unavailable"
     default_detail = "Database is unavailable."
     status_code = 503
+
+
+class InvalidCredentials(DomainError):
+    """帳號或密碼錯誤。
+
+    AD-19：帳號不存在與密碼錯誤回應同一個 code，避免透露帳號是否存在。
+    """
+
+    code = "auth.invalid_credentials"
+    default_detail = "Invalid username or password."
+    status_code = 401
+
+
+class AccountLocked(DomainError):
+    """帳號因連續登入失敗而被暫時鎖定（AD-19）。
+
+    ``detail`` 會帶上剩餘鎖定秒數（``remaining_seconds=<n>``），供前端顯示
+    剩餘鎖定時間；使用者可見文案仍由前端 catalog 本地化（AD-33）。
+    """
+
+    code = "auth.locked"
+    default_detail = "Account is temporarily locked."
+    status_code = 423
+
+
+class CsrfFailed(DomainError):
+    """CSRF 驗證失敗（缺少或不正確的 token）。
+
+    AD-6：session + CSRF 是唯一認證機制，因此寫入型端點必須帶
+    ``X-CSRFToken``，否則一律拒絕。
+    """
+
+    code = "auth.csrf_failed"
+    default_detail = "CSRF verification failed."
+    status_code = 403

@@ -15,3 +15,11 @@ ALLOWED_HOSTS = [
 
 # 開發時 Django 應能顯示除錯頁面，但不得洩漏憑證
 INTERNAL_IPS = ["127.0.0.1"]
+
+# 開發時前端由 Vite dev server（:5173）提供，API 以 proxy 轉送 Django（:8000）。
+# 瀏覽器送出的 Origin 仍是 :5173，與 Django 看到的 Host 不同，因此必須把
+# 開發用 origin 列為信任來源，否則 CSRF 的 Origin 檢查會擋掉登入（AD-6）。
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+]

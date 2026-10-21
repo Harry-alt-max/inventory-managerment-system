@@ -1,7 +1,6 @@
-import { Languages, Moon, Search, Sun } from "lucide-react";
+import { Moon, Search, Sun } from "lucide-react";
 
-import { LOCALE_LABELS, useI18n } from "../../i18n";
-import type { Locale } from "../../i18n";
+import { useI18n } from "../../i18n";
 import { useTheme } from "../../lib/theme";
 import { UserMenu } from "./UserMenu";
 
@@ -10,9 +9,13 @@ interface TopBarProps {
   description?: string;
 }
 
-/** 頂列（DESIGN.md「頂列」）：左：頁面標題；中：全域搜尋；右：語系、色彩模式、使用者選單。 */
+/**
+ * 頂列（DESIGN.md「頂列」）：左：頁面標題；中：全域搜尋；右：色彩模式、使用者選單。
+ *
+ * v1 介面只出繁體中文（AD-33），語系切換已停用（catalog 的 en-US 條目保留待補）。
+ */
 export function TopBar({ title, description }: TopBarProps) {
-  const { t, locale, setLocale, locales } = useI18n();
+  const { t } = useI18n();
   const { mode, toggle } = useTheme();
 
   return (
@@ -38,28 +41,6 @@ export function TopBar({ title, description }: TopBarProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <div
-          role="group"
-          aria-label={t("topbar.language")}
-          className="flex items-center gap-1 rounded-pill border border-border-strong bg-surface p-0.5"
-        >
-          <Languages size={16} strokeWidth={1.5} aria-hidden="true" className="ml-2 text-fg-muted" />
-          {locales.map((option: Locale) => (
-            <button
-              key={option}
-              type="button"
-              onClick={() => setLocale(option)}
-              aria-pressed={option === locale}
-              title={LOCALE_LABELS[option]}
-              className={`rounded-pill px-2 py-1 text-xs font-medium transition-colors ${
-                option === locale ? "bg-primary text-primary-fg" : "text-fg-secondary hover:bg-muted-tint"
-              }`}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-
         <button
           type="button"
           onClick={toggle}

@@ -1,16 +1,30 @@
 import { useState } from "react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
+import { useAuth } from "./features/auth";
 import { AppShell, NAV_ITEMS } from "./features/shell";
 import type { NavItem } from "./features/shell";
 import { useI18n } from "./i18n";
 import { HomePage } from "./pages/HomePage";
+import { LoginPage } from "./pages/LoginPage";
 
 export default function App() {
   const { t } = useI18n();
+  const { user, status } = useAuth();
   const [activeKey, setActiveKey] = useState("dashboard");
 
-  const activeItem: NavItem = NAV_ITEMS.find((item) => item.key === activeKey) ?? NAV_ITEMS[0];
+  // 未登入時顯示登入頁；載入中先留白避免閃爍。
+  if (status === "loading") {
+    return <div className="min-h-screen bg-background" />;
+  }
+  if (!user) {
+    return <LoginPage />;
+  }
+
+  // 側邊導覽依角色顯示（EXPERIENCE.md：無權限的項目不顯示）。
+  const role = user.roles[0];
+  const items = NAV_ITEMS.filter((item) => item.roles.includes(role));
+  const activeItem: NavItem = items.find((item) => item.key === activeKey) ?? items[0];
 
   function handleSelect(item: NavItem) {
     setActiveKey(item.key);
@@ -20,7 +34,7 @@ export default function App() {
     <AppShell
       title={t(activeItem.labelKey)}
       description={t("app.subtitle")}
-      activeKey={activeKey}
+      activeKey={activeItem.key}
       onSelectNav={handleSelect}
     >
       {activeItem.implemented ? (

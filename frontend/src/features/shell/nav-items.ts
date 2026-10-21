@@ -10,9 +10,11 @@ export interface NavItem {
   group: "workspace" | "management";
   /** 本 story 是否已有可用的內容頁。 */
   implemented: boolean;
+  /** 可看見此項目的角色代碼（AD-5：無權限的項目不顯示）。 */
+  roles: string[];
 }
 
-/** 側邊導覽項目（依 spine 的四個 epic 分組）。 */
+/** 側邊導覽項目（依 spine 的四個 epic 分組，權限依 PRD FR-2 的角色矩陣）。 */
 export const NAV_ITEMS: NavItem[] = [
   {
     key: "dashboard",
@@ -20,6 +22,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: LayoutDashboard,
     group: "workspace",
     implemented: true,
+    roles: ["warehouse", "purchasing", "sales", "accounting"],
   },
   {
     key: "accounts",
@@ -27,6 +30,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Users,
     group: "management",
     implemented: false,
+    roles: ["warehouse"],
   },
   {
     key: "catalog",
@@ -34,6 +38,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Package,
     group: "management",
     implemented: false,
+    roles: ["warehouse", "purchasing"],
   },
   {
     key: "stock",
@@ -41,6 +46,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Boxes,
     group: "management",
     implemented: false,
+    roles: ["warehouse"],
   },
   {
     key: "sales",
@@ -48,6 +54,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Receipt,
     group: "management",
     implemented: false,
+    roles: ["sales", "accounting"],
   },
   {
     key: "settings",
@@ -55,5 +62,6 @@ export const NAV_ITEMS: NavItem[] = [
     icon: Settings,
     group: "management",
     implemented: false,
+    roles: ["warehouse", "purchasing", "sales", "accounting"],
   },
 ];

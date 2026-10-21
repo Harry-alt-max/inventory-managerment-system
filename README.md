@@ -80,6 +80,22 @@ cd backend
 > 資料表沿用慣例名稱 `auth_user`，角色沿用 Django auth 的 `Group`（AD-5：不建第二套權限系統）。
 > 後續 story 若需在使用者上加欄位（例如帳號代號），可直接追加 migration。
 
+### 建立測試帳號並登入
+
+系統需要帳號才能登入。用 `seed_demo` 指令建立四種角色各一個測試帳號
+（密碼由指令隨機產生並直接印出，不寫進任何檔案）：
+
+```powershell
+..\.venv\Scripts\python.exe manage.py seed_demo
+```
+
+指令會印出四組帳號與密碼，例如 `demo_warehouse`（倉管）、`demo_purchasing`（採購）、
+`demo_sales`（銷售）、`demo_accounting`（會計）。啟動前後端後開啟
+<http://127.0.0.1:5173>，會看到登入頁；登入後可依角色看到不同的側邊導覽項目。
+
+> 登入以 session + CSRF 為唯一機制（AD-6）：登入失敗 5 次會鎖住帳號 15 分鐘；
+> 未登入的 API 請求回 `401 auth.unauthenticated`，權限不足回 `403 auth.forbidden`。
+
 ### 檢查設定分層
 
 ```powershell
