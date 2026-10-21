@@ -4,6 +4,7 @@
 
 - ``GET  /api/v1/auth/csrf``   → 發放 CSRF cookie 並回傳 token
 - ``POST /api/v1/auth/login``  → 帳號密碼登入（需要 ``X-CSRFToken``）
+- ``POST /api/v1/auth/login-as`` → 以角色直接進入（示範模式，僅開發環境可用）
 - ``POST /api/v1/auth/logout`` → 結束 session（需要 ``X-CSRFToken``）
 - ``GET  /api/v1/auth/me``     → 目前登入者（未登入回 401）
 
@@ -100,3 +101,44 @@ class MeView(APIView):
 
     def get(self, request, *args, **kwargs):
         return Response({"user": describe_user(request.user)})
+
+
+class RoleLoginView(APIView):
+    """以角色直接進入（示範模式）。
+
+    取代「輸入帳號密碼」的登入畫面：選一個職能即以該職能的示範帳號建立 session，
+    後續的權限判斷完全沿用 Django auth 的群組權限（AD-5）。
+
+    **僅在開發環境可用**：正式環境的 ``DEMO_ROLE_LOGIN`` 預設關閉，此端點一律回 403。
+    """
+
+    permission_classes = [AllowAny]
+    authentication_classes: list = []
+
+    def post(self, request, *args, **kwargs):
+        from django.conf import settings
+        from django.contrib.auth import login as django_login
+
+        from accounts.management.commands.seed_demo import DEMO_USERNAMES
+        from accounts.models import User
+        from core.exceptions import PermissionDenied, ResourceNotFound
+        from core.permissions import ROLE_GROUP_NAMES
+
+        if not getattr(settings, "DEMO_ROLE_LOGIN", False):
+            raise PermissionDenied("角色登入未啟用。")
+
+        role = str(request.data.get("role") or "").strip()
+        if role not in ROLE_GROUP_NAMES:
+            raise ValidationFailed(field_errors={"role": ["未知的角色。"]})
+
+        username = DEMO_USERNAMES.get(role)
+        user = User.objects.filter(username=username).first()
+        if user is None:
+            raise ResourceNotFound(
+                f"找不到角色 {role} 的示範帳號，請先執行 manage.py seed_demo。"
+            )
+        if not user.is_active:
+            raise PermissionDenied("該帳號已停用。")
+
+        django_login(request._request, user)
+        return Response({"user": describe_user(user)})

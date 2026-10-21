@@ -8,7 +8,7 @@ import { useI18n } from "./i18n";
 import { CatalogPage } from "./pages/CatalogPage";
 import { HomePage } from "./pages/HomePage";
 import { InboundPage } from "./pages/InboundPage";
-import { LoginPage } from "./pages/LoginPage";
+import { RolePickerPage } from "./pages/RolePickerPage";
 import { StockPage } from "./pages/StockPage";
 
 export default function App() {
@@ -21,7 +21,7 @@ export default function App() {
     return <div className="min-h-screen bg-background" />;
   }
   if (!user) {
-    return <LoginPage />;
+    return <RolePickerPage />;
   }
 
   // 側邊導覽依角色顯示（EXPERIENCE.md：無權限的項目不顯示）。

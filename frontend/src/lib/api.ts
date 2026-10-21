@@ -173,6 +173,17 @@ export async function login(username: string, password: string): Promise<AuthUse
   return payload.user;
 }
 
+/** 以角色直接進入（示範模式；正式環境未開放）。 */
+export async function loginAsRole(role: string): Promise<AuthUser> {
+  const token = await fetchCsrfToken();
+  const payload = await apiFetch<{ user: AuthUser }>("/auth/login-as", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-CSRFToken": token },
+    body: JSON.stringify({ role }),
+  });
+  return payload.user;
+}
+
 /** 登出（結束 session）。 */
 export async function logout(): Promise<void> {
   const token = readCsrfToken() || (await fetchCsrfToken());

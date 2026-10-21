@@ -57,6 +57,12 @@ SECRET_KEY = _secret_key
 DEBUG = False
 ALLOWED_HOSTS: list[str] = []
 
+# 「選角色直接進入」的示範模式（POST /api/v1/auth/login-as）。
+# 預設關閉；僅開發環境的 settings/dev.py 開啟，正式環境必須由環境變數明確啟用。
+DEMO_ROLE_LOGIN = (
+    os.environ.get("DEMO_ROLE_LOGIN", "").strip().lower() in {"1", "true", "yes"}
+)
+
 # ---------------------------------------------------------------------------
 # 應用程式
 # ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
-import { fetchCurrentUser, login as loginRequest, logout as logoutRequest } from "../../lib/api";
+import { fetchCurrentUser, login as loginRequest, loginAsRole, logout as logoutRequest } from "../../lib/api";
 import type { AuthUser } from "../../lib/api";
 
 export type AuthStatus = "loading" | "authenticated" | "anonymous";
@@ -9,8 +9,10 @@ export type AuthStatus = "loading" | "authenticated" | "anonymous";
 interface AuthContextValue {
   user: AuthUser | null;
   status: AuthStatus;
-  /** 登入；成功後更新身分狀態。 */
+  /** 以帳號密碼登入；成功後更新身分狀態。 */
   signIn: (username: string, password: string) => Promise<void>;
+  /** 以角色直接進入（示範模式）。 */
+  signInAsRole: (role: string) => Promise<void>;
   /** 登出；結束後回到登入頁。 */
   signOut: () => Promise<void>;
 }
@@ -46,6 +48,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus("authenticated");
   }, []);
 
+  const signInAsRole = useCallback(async (role: string) => {
+    const current = await loginAsRole(role);
+    setUser(current);
+    setStatus("authenticated");
+  }, []);
+
   const signOut = useCallback(async () => {
     await logoutRequest();
     setUser(null);
@@ -53,8 +61,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, status, signIn, signOut }),
-    [user, status, signIn, signOut],
+    () => ({ user, status, signIn, signInAsRole, signOut }),
+    [user, status, signIn, signInAsRole, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -23,3 +23,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:5173",
 ]
+
+# 示範模式：允許「選角色直接進入」（POST /api/v1/auth/login-as）。
+# 正式環境的 base 層預設關閉（AD-23：正式環境不得有便利的預設行為）。
+DEMO_ROLE_LOGIN = True
