@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>方向 D — Terminal Ledger｜新增銷貨單</title>
+<style>
+/* ============================================================
+   DIRECTION D — TERMINAL LEDGER（控制室終端帳列）
+   色彩系統：
+   --bg      #0E1116  應用程式底色
+   --panel   #14181E  面板
+   --panel2  #1A1F26  表頭 / 次要區塊
+   --line    #2F3742  框線
+   --line2   #232A33  內部細線
+   --ink     #D5DBE3  主要文字
+   --ink2    #8A94A3  次要文字
+   --ink3    #5B6572  提示文字
+   --cyan    #6CB6FF  焦點 / 主要動作
+   --cyan-w  #12253A  焦點底色
+   --green   #4EC9A0  正向（毛利）
+   --green-w #11291F
+   --amber   #E5C07B  警告（成本未設定）
+   --amber-w #2B2313
+   --red     #E06C75  錯誤
+   --red-w   #2C1618
+   排版：全站等寬字型（Consolas），標題以 [ ] 括號 + 全大寫小標，
+         欄位名稱英文大寫，中文為正式用語，行高緊湊 22px
+   ============================================================ */
+:root{
+  --bg:#0E1116; --panel:#14181E; --panel2:#1A1F26;
+  --line:#2F3742; --line2:#232A33;
+  --ink:#D5DBE3; --ink2:#8A94A3; --ink3:#5B6572;
+  --cyan:#6CB6FF; --cyan-w:#12253A;
+  --green:#4EC9A0; --green-w:#11291F;
+  --amber:#E5C07B; --amber-w:#2B2313;
+  --red:#E06C75; --red-w:#2C1618;
+  --mono:Consolas,"SFMono-Regular","Menlo","DejaVu Sans Mono","Microsoft JhengHei UI","Microsoft JhengHei","PingFang TC",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#08090C;color:var(--ink);font-family:var(--mono);font-size:12.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.page{max-width:1320px;margin:0 auto;padding:30px 24px 60px}
+.doc-head{border:1px solid var(--line);background:var(--panel);padding:18px 20px;margin-bottom:26px}
+.kicker{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan)}
+h1{font-size:20px;font-weight:600;letter-spacing:.02em;margin:8px 0 10px;color:#E6ECF3}
+.rationale{max-width:940px;color:var(--ink2);font-size:13px;line-height:1.75}
+.rationale strong{color:var(--ink)}
+.tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:11px;border:1px solid var(--line);background:#11151A;color:var(--ink2);padding:3px 9px;letter-spacing:.04em}
+.tag.c{color:var(--cyan);border-color:#26486E;background:var(--cyan-w)}
+
+.frame{margin-top:26px;border:1px solid var(--line);background:var(--panel)}
+.bar{display:flex;align-items:center;gap:10px;background:#11151A;border-bottom:1px solid var(--line);padding:7px 12px}
+.dots{display:flex;gap:5px}
+.dots i{width:9px;height:9px;border-radius:2px;background:#2F3742;display:block}
+.url{flex:1;border:1px solid var(--line);background:#0C0F13;font-size:11.5px;color:var(--ink3);padding:4px 9px;letter-spacing:.03em}
+.url b{color:var(--cyan);font-weight:400}
+.frame-note{border-bottom:1px solid var(--line);background:#11151A;color:var(--ink3);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px}
+.frame-note b{color:var(--amber);font-weight:400}
+
+.app{display:grid;grid-template-columns:198px 1fr;min-height:660px}
+.rail{border-right:1px solid var(--line);background:#11151A;padding:0}
+.rail .brand{border-bottom:1px solid var(--line);padding:12px 14px}
+.rail .brand b{display:block;color:#E6ECF3;font-size:13px;letter-spacing:.06em}
+.rail .brand span{font-size:10px;letter-spacing:.2em;color:var(--cyan);text-transform:uppercase}
+.rail nav{padding:6px 0}
+.rail a{display:flex;justify-content:space-between;padding:5px 14px;color:var(--ink2);text-decoration:none;font-size:12.5px;border-left:2px solid transparent}
+.rail a:hover{background:#161B22;color:var(--ink)}
+.rail a.on{background:var(--cyan-w);color:#EAF3FF;border-left-color:var(--cyan);font-weight:600}
+.rail a i{font-style:normal;font-size:10px;color:var(--ink3)}
+.rail a.on i{color:var(--cyan)}
+.rail .foot{border-top:1px solid var(--line);margin-top:8px;padding:10px 14px;color:var(--ink3);font-size:11px;line-height:1.7}
+.rail .foot b{color:var(--ink2);font-weight:400}
+
+.main{background:var(--bg);display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);background:var(--panel);padding:9px 14px}
+.crumb{font-size:11.5px;color:var(--ink3)}
+.crumb b{color:var(--ink)}
+.topbar h2{font-size:15px;font-weight:600;letter-spacing:.06em;color:#EAF3FF;margin-right:auto}
+.topbar h2 small{font-size:10.5px;color:var(--cyan);font-weight:400;margin-left:10px;letter-spacing:.14em}
+.btn{font-family:var(--mono);font-size:12px;padding:6px 14px;border:1px solid var(--line);background:#171C23;color:var(--ink);cursor:default;letter-spacing:.03em}
+.btn.pri{background:var(--cyan);border-color:var(--cyan);color:#08131F;font-weight:700}
+.btn.ghost{background:transparent;color:var(--ink2)}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.pri:hover{color:#08131F}
+.btnrow{display:flex;gap:6px}
+.kbd{font-size:10px;color:var(--ink3);border:1px solid var(--line);padding:0 4px;margin-left:6px}
+
+.content{padding:12px;display:grid;grid-template-columns:1fr 292px;gap:12px;align-items:start}
+.box{border:1px solid var(--line);background:var(--panel)}
+.box-hd{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);background:var(--panel2);padding:6px 10px;font-size:11.5px;letter-spacing:.06em;color:var(--ink2);text-transform:uppercase}
+.box-hd h3{font-size:12px;font-weight:600;color:#E6ECF3;letter-spacing:.08em}
+.box-hd .r{margin-left:auto;display:flex;gap:6px;align-items:center}
+.tag2{font-size:10.5px;border:1px solid var(--line);color:var(--ink3);padding:1px 7px;letter-spacing:.06em}
+.tag2.a{color:var(--cyan);border-color:#26486E;background:var(--cyan-w)}
+.tag2.g{color:var(--green);border-color:#1F4A3A;background:var(--green-w)}
+.tag2.w{color:var(--amber);border-color:#4A3D1C;background:var(--amber-w)}
+.tag2.r{color:var(--red);border-color:#4E2327;background:var(--red-w)}
+
+.meta{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}
+.meta div{padding:7px 10px;border-right:1px solid var(--line2)}
+.meta div:last-child{border-right:0}
+.meta label{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:2px}
+.meta span{font-size:12.5px;color:var(--ink)}
+
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+thead th{background:#11151A;border-bottom:1px solid var(--line);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);font-weight:600;text-align:left;padding:6px 8px;white-space:nowrap}
+thead th.num{text-align:right}
+tbody td{padding:0;border-bottom:1px solid var(--line2);font-size:12.5px}
+tbody tr:hover td{background:#141920}
+td .cell{padding:5px 8px;line-height:1.45}
+td.num .cell{text-align:right;font-size:12px}
+td.ctr .cell{text-align:center}
+.dim{color:var(--ink2)}
+.dim3{color:var(--ink3)}
+.in{border:1px solid #3A4553;background:#0C0F13;color:var(--ink);padding:3px 6px;font-family:var(--mono);font-size:12px;text-align:right;width:100%}
+.in.focus{border-color:var(--cyan);background:#0B1620;box-shadow:inset 0 0 0 1px rgba(108,182,255,.28)}
+.chip{display:inline-block;font-size:11px;padding:1px 8px;border:1px solid;letter-spacing:.04em;white-space:nowrap}
+.chip.warn{color:var(--amber);background:var(--amber-w);border-color:#4A3D1C}
+.chip.err{color:var(--red);background:var(--red-w);border-color:#4E2327}
+.chip.ok{color:var(--green);background:var(--green-w);border-color:#1F4A3A}
+.chip.idle{color:var(--ink2);border-color:var(--line);background:#11151A}
+.profit{color:var(--green)}
+.note{padding:3px 8px 6px;font-size:11.5px;color:var(--amber);line-height:1.55}
+.note b{font-weight:700}
+tr.bad td{background:#171214}
+tr.bad td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+
+.picker{margin-top:12px}
+.picker-hd{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);background:var(--panel2);padding:6px 10px;font-size:11.5px;letter-spacing:.06em;color:var(--ink2);text-transform:uppercase}
+.search{flex:1;border:1px solid var(--line);background:#0C0F13;color:var(--ink3);padding:4px 8px;font-size:12px;letter-spacing:.02em}
+.picker td .cell{padding:4px 8px;font-size:12px}
+.picker tfoot td{background:#11151A;border-top:1px solid var(--line);color:var(--ink2);font-size:11.5px}
+.picker tfoot td .cell{padding:6px 8px}
+
+.sum{position:sticky;top:12px}
+.sum .body{padding:8px 10px}
+.srow{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px dotted var(--line2)}
+.srow:last-of-type{border-bottom:0}
+.srow label{font-size:11.5px;color:var(--ink2);letter-spacing:.04em}
+.srow span{font-size:12.5px}
+.srow.tot span{font-size:15px;font-weight:700;color:#EAF3FF}
+.gbox{margin:8px 0;border:1px solid #26486E;background:var(--cyan-w);padding:9px 10px}
+.gbox label{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan)}
+.gbox .val{font-size:22px;font-weight:700;color:#8CC8FF;letter-spacing:-.01em;margin:2px 0}
+.gbox .val small{font-size:11px;color:#5E86AD;font-weight:400}
+.gbox .sub{font-size:10.5px;color:#6E8FB4}
+.alert{border:1px solid #4A3D1C;background:var(--amber-w);color:var(--amber);padding:7px 9px;font-size:11.5px;line-height:1.55;margin-top:8px}
+.alert b{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
+.sum .foot{border-top:1px solid var(--line);padding:9px 10px;display:flex;flex-direction:column;gap:6px;background:var(--panel2)}
+.sum .foot .btn{width:100%;text-align:center}
+.statusbar{border-top:1px solid var(--line);background:#11151A;color:var(--ink3);font-size:11px;padding:5px 12px;display:flex;gap:18px;letter-spacing:.04em}
+.statusbar b{color:var(--ink2);font-weight:400}
+.statusbar .ok{color:var(--green)}
+.statusbar .warn{color:var(--amber)}
+
+.empty{padding:40px 24px 46px;text-align:center}
+.empty .glyph{border:1px dashed #3A4553;color:var(--ink3);display:inline-block;padding:6px 16px;font-size:13px;letter-spacing:.2em;margin-bottom:16px}
+.empty h4{font-size:14px;font-weight:700;color:#E6ECF3;margin-bottom:8px;letter-spacing:.06em}
+.empty p{font-size:12.5px;color:var(--ink2);max-width:520px;margin:0 auto 8px;line-height:1.7}
+.empty ul{list-style:none;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:12px 0 18px}
+.empty li{font-size:11.5px;border:1px solid var(--line);background:#11151A;padding:2px 9px;color:var(--ink2)}
+.empty .acts{display:flex;gap:8px;justify-content:center}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;border-bottom:1px solid var(--line);background:var(--panel2);padding:9px 10px}
+.fg label{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+.fg .box{border:1px solid var(--line);background:#0C0F13;padding:4px 8px;font-size:12px;color:var(--ink);min-width:160px}
+.fg .box.ph{color:var(--ink3)}
+.stat-strip{display:flex;border-bottom:1px solid var(--line)}
+.stat-strip div{padding:6px 12px;border-right:1px solid var(--line2)}
+.stat-strip label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.stat-strip b{font-size:13px;color:#EAF3FF}
+.legend{display:flex;gap:26px;flex-wrap:wrap;margin-top:22px;border:1px solid var(--line);background:var(--panel);padding:14px 16px;font-size:11.5px;color:var(--ink2);line-height:1.85}
+.legend b{color:var(--cyan);font-weight:400;font-size:10px;letter-spacing:.16em;text-transform:uppercase;display:block;margin-bottom:5px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="doc-head">
+    <div class="kicker">Direction D — Terminal Ledger</div>
+    <h1>控制室終端：把單據當成可稽核的紀錄流</h1>
+    <p class="rationale"><strong>方向說明：</strong>本方向假設使用者坐在倉管或資訊部門的位置，需要一眼看穿單據的每一個欄位與每一次狀態變化：全站等寬字型、方框框線、22px 緊湊列高、單一訊號藍 #6CB6FF 標示焦點與主要動作，其他顏色僅用於狀態（綠＝毛利正常、琥珀＝成本未設定、磚紅＝數量不足）。它刻意帶有終端機與稽核日誌的味道，暗示鍵盤操作與可追溯性，而非以視覺舒適為先，是四個方向中「最像機器、最少修飾」的一個。</p>
+    <div class="tags">
+      <span class="tag">密度 · 極高（22px 列高）</span>
+      <span class="tag">字重 · 等寬 400 / 700</span>
+      <span class="tag">邊界 · 方框 1px</span>
+      <span class="tag">登錄 · 終端 / 稽核</span>
+      <span class="tag c">訊號色 · #6CB6FF</span>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="bar">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="url">app://inventory.local/sales/new　<b>新增銷貨單</b></div>
+    </div>
+    <div class="frame-note">HERO SCREEN — <b>新增銷貨單</b>　|　STATE: 成本未設定列 (COST_MISSING) ＋ 可用數量不足列</div>
+    <div class="app">
+      <aside class="rail">
+        <div class="brand"><b>庫存管理系統</b><span>INVENTORY.CONSOLE</span></div>
+        <nav>
+          <a href="#"><span>庫存現況</span><i>01</i></a>
+          <a href="#"><span>商品主檔</span><i>02</i></a>
+          <a href="#"><span>採購與補貨</span><i>03</i></a>
+          <a class="on" href="#"><span>銷貨紀錄</span><i>04</i></a>
+          <a href="#"><span>異動紀錄</span><i>05</i></a>
+        </nav>
+        <div class="foot">
+          <b>LOGIN</b>
+          陳彥廷 / 業務部<br>
+          SHIFT: 2026-10-21 早班
+        </div>
+      </aside>
+
+      <div class="main">
+        <div class="topbar">
+          <div class="crumb">銷貨紀錄 / <b>新增銷貨單</b></div>
+          <h2>新增銷貨單 <small>NEW SALE ORDER</small></h2>
+          <div class="btnrow">
+            <button class="btn">儲存草稿<span class="kbd">Ctrl+S</span></button>
+            <button class="btn ghost">離開</button>
+          </div>
+        </div>
+
+        <div class="content">
+          <div>
+            <div class="box">
+              <div class="box-hd"><h3>[ 基本資料 ]</h3><span>DRAFT SO-2026-0148</span>
+                <div class="r"><span class="tag2">台北三越股份有限公司</span><span class="tag2">交貨 2026-10-24</span></div>
+              </div>
+              <div class="meta">
+                <div><label>Customer / 客戶</label><span>台北三越股份有限公司</span></div>
+                <div><label>Sales Rep / 業務員</label><span>陳彥廷</span></div>
+                <div><label>Payment / 付款條件</label><span>月結 30 天</span></div>
+                <div><label>Warehouse / 出貨倉</label><span>B 倉</span></div>
+              </div>
+            </div>
+
+            <div class="box" style="margin-top:12px">
+              <div class="box-hd"><h3>[ 銷貨明細 ]</h3><span>2 ITEMS</span>
+                <div class="r"><span class="tag2">折扣依單品計算</span><span class="tag2 a">加入商品</span></div>
+              </div>
+              <table>
+                <colgroup>
+                  <col style="width:12%"><col style="width:17%"><col style="width:11%"><col style="width:10%">
+                  <col style="width:8%"><col style="width:9%"><col style="width:8%"><col style="width:12%"><col style="width:13%">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th>
+                    <th class="num">數量</th><th class="num">單價</th><th class="num">折扣</th><th class="num">小計</th><th class="num">毛利</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><div class="cell">INV-000128</div></td>
+                    <td><div class="cell">六角螺絲 M8×40</div></td>
+                    <td><div class="cell dim">B 倉 A-03</div></td>
+                    <td class="num"><div class="cell dim">可售 240</div></td>
+                    <td class="num"><div class="cell"><span class="in focus">100</span></div></td>
+                    <td class="num"><div class="cell"><span class="in">12.50</span></div></td>
+                    <td class="num"><div class="cell"><span class="in">5%</span></div></td>
+                    <td class="num"><div class="cell">1,187.50</div></td>
+                    <td class="num"><div class="cell"><span class="chip ok">毛利 375.00</span></div></td>
+                  </tr>
+                  <tr>
+                    <td><div class="cell">INV-000201</div></td>
+                    <td><div class="cell">棉手套 L</div></td>
+                    <td><div class="cell dim">C 倉 B-11</div></td>
+                    <td class="num"><div class="cell dim">可售 60</div></td>
+                    <td class="num"><div class="cell"><span class="in">40</span></div></td>
+                    <td class="num"><div class="cell"><span class="in">85.00</span></div></td>
+                    <td class="num"><div class="cell dim3">—</div></td>
+                    <td class="num"><div class="cell">3,400.00</div></td>
+                    <td class="num"><div class="cell"><span class="chip warn">成本未設定</span></div></td>
+                  </tr>
+                  <tr>
+                    <td colspan="9" style="padding:0">
+                      <div class="note"><b>此商品無入庫成本</b>　INV-000201 尚未設定入庫成本，請於「商品主檔」補建成本後再提交此銷貨單。</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="picker">
+                <div class="picker-hd">
+                  <span>[ 加入商品 ]</span>
+                  <span class="search">搜尋商品編號或名稱，例如 INV-000355</span>
+                  <span class="tag2">可售數量 &gt; 0</span>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width:14%">商品編號</th><th style="width:24%">商品名稱</th><th style="width:14%">庫存位置</th>
+                      <th style="width:14%" class="num">可用數量</th><th style="width:14%" class="num">參考單價</th>
+                      <th style="width:13%">狀態</th><th style="width:7%"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><div class="cell">INV-000077</div></td>
+                      <td><div class="cell">尼龍束線帶 4×200mm</div></td>
+                      <td><div class="cell dim">A 倉 C-02</div></td>
+                      <td class="num"><div class="cell dim">可售 1,200</div></td>
+                      <td class="num"><div class="cell">3.80</div></td>
+                      <td><div class="cell"><span class="chip idle">可加入</span></div></td>
+                      <td><div class="cell"><span class="tag2 a">加入</span></div></td>
+                    </tr>
+                    <tr class="bad">
+                      <td><div class="cell">INV-000355</div></td>
+                      <td><div class="cell">鍍鋅角碼 50×50</div></td>
+                      <td><div class="cell dim">B 倉 A-11</div></td>
+                      <td class="num"><div class="cell">可售 12</div></td>
+                      <td class="num"><div class="cell">46.00</div></td>
+                      <td><div class="cell"><span class="chip err">可用數量不足</span></div></td>
+                      <td><div class="cell dim3">—</div></td>
+                    </tr>
+                    <tr>
+                      <td><div class="cell">INV-000460</div></td>
+                      <td><div class="cell">軸承承座 SNL 517</div></td>
+                      <td><div class="cell dim">D 倉 A-07</div></td>
+                      <td class="num"><div class="cell dim">可售 36</div></td>
+                      <td class="num"><div class="cell">128.00</div></td>
+                      <td><div class="cell"><span class="chip idle">可加入</span></div></td>
+                      <td><div class="cell"><span class="tag2 a">加入</span></div></td>
+                    </tr>
+                  </tbody>
+                  <tfoot><tr><td colspan="7"><div class="cell">符合條件的品項 3 筆，其中 1 筆可用數量不足，請調整數量或改採分批出貨。</div></td></tr></tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <aside class="box sum">
+            <div class="box-hd"><h3>[ 摘要 ]</h3><span class="tag2">即時計算</span></div>
+            <div class="body">
+              <div class="srow"><label>原價合計</label><span>4,587.50</span></div>
+              <div class="srow"><label>折扣</label><span>5%</span></div>
+              <div class="srow tot"><label>折後金額</label><span>4,358.13</span></div>
+              <div class="srow"><label>稅別</label><span class="dim3">內含稅</span></div>
+              <div class="gbox">
+                <label>Gross Margin / 毛利</label>
+                <div class="val">375.00<small> NTD</small></div>
+                <div class="sub">毛利率 8.6% · 僅計入已設定成本的品項</div>
+              </div>
+              <div class="alert"><b>毛利將為負值</b>INV-000201 無入庫成本，本單毛利尚未計入此品項，數值可能不正確。</div>
+            </div>
+            <div class="foot">
+              <button class="btn pri">提交銷貨單</button>
+              <button class="btn">儲存草稿</button>
+              <button class="btn ghost">離開</button>
+            </div>
+          </aside>
+        </div>
+
+        <div class="statusbar">
+          <span>存檔：<b>草稿 SO-2026-0148</b></span>
+          <span>列數：<b>2</b></span>
+          <span class="warn">警示：<b>1 筆成本未設定</b></span>
+          <span class="ok">連線：<b>正常</b></span>
+          <span style="margin-left:auto">LOGIN 陳彥廷</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="bar">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="url">app://inventory.local/stock/search　<b>庫存查詢清單</b></div>
+    </div>
+    <div class="frame-note">SECONDARY SCREEN — <b>庫存查詢清單</b>　|　STATE: 查無符合資料 (EMPTY)</div>
+    <div class="app">
+      <aside class="rail">
+        <div class="brand"><b>庫存管理系統</b><span>INVENTORY.CONSOLE</span></div>
+        <nav>
+          <a class="on" href="#"><span>庫存現況</span><i>01</i></a>
+          <a href="#"><span>商品主檔</span><i>02</i></a>
+          <a href="#"><span>採購與補貨</span><i>03</i></a>
+          <a href="#"><span>銷貨紀錄</span><i>04</i></a>
+          <a href="#"><span>異動紀錄</span><i>05</i></a>
+        </nav>
+        <div class="foot"><b>LOGIN</b>陳彥廷 / 業務部</div>
+      </aside>
+      <div class="main">
+        <div class="topbar">
+          <div class="crumb">庫存現況 / <b>庫存查詢清單</b></div>
+          <h2>庫存查詢清單 <small>STOCK QUERY</small></h2>
+          <div class="btnrow"><button class="btn">匯出 CSV</button></div>
+        </div>
+        <div class="content" style="grid-template-columns:1fr">
+          <div class="box">
+            <div class="box-hd"><h3>[ 查詢條件 ]</h3><span>QUERY TIME 2026-10-21 09:12</span></div>
+            <div class="filters">
+              <div class="fg"><label>商品名稱</label><div class="box">軸承承座</div></div>
+              <div class="fg"><label>庫存位置</label><div class="box">D 倉</div></div>
+              <div class="fg"><label>可用數量</label><div class="box ph">全部</div></div>
+              <div class="fg"><label>供應商</label><div class="box ph">全部</div></div>
+              <button class="btn pri">查詢</button>
+              <button class="btn">清除篩選</button>
+            </div>
+            <div class="stat-strip">
+              <div><label>符合筆數</label><b>0</b></div>
+              <div><label>合計可用數量</label><b>—</b></div>
+              <div><label>合計庫存金額</label><b>—</b></div>
+              <div><label>低於安全庫存</label><b>—</b></div>
+            </div>
+            <table>
+              <colgroup><col style="width:13%"><col style="width:22%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
+              <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">安全庫存</th><th class="num">單位成本</th><th class="num">庫存金額</th></tr></thead>
+            </table>
+            <div class="empty">
+              <div class="glyph">[ 0 ROWS ]</div>
+              <h4>查無符合資料</h4>
+              <p>目前條件下沒有庫存項目。請移除「庫存位置 = D 倉」或放寬商品名稱後重新查詢。</p>
+              <ul><li>商品名稱：軸承承座</li><li>庫存位置：D 倉</li><li>可用數量：全部</li></ul>
+              <div class="acts">
+                <button class="btn pri">清除篩選並重新查詢</button>
+                <button class="btn">前往採購與補貨</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="statusbar">
+          <span>查詢時間：<b>2026-10-21 09:12:04</b></span>
+          <span>結果：<b>0 筆</b></span>
+          <span style="margin-left:auto">LOGIN 陳彥廷</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div><b>Tokens</b>底色 #0E1116 · 面板 #14181E · 框線 #2F3742<br>文字 #D5DBE3 / #8A94A3 / #5B6572<br>訊號藍 #6CB6FF · 綠 #4EC9A0 · 琥珀 #E5C07B · 紅 #E06C75</div>
+    <div><b>Type</b>全站 Consolas 等寬 · 標題 600 · 欄位名 10.5px 大寫<br>內文 12.5px · 列高 22px · 數值右對齊</div>
+    <div><b>Interaction Implication</b>框線與 [ ] 標題暗示可稽核、鍵盤導向<br>狀態以 chip + 顏色編碼呈現，底部狀態列顯示草稿與警示計數</div>
+  </div>
+
+</div>
+</body>
+</html>

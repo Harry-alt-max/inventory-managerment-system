@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>庫存管理系統 · 色彩主題比較（5 種變化）</title>
+<style>
+/* ============================================================
+   庫存管理系統 · 色彩主題比較頁
+   Inline CSS only / system font stack / no JS / no network
+   變化 01 精密石墨 Precision Graphite
+     light: background #F4F5F7 | surface #FFFFFF | surface-raised #FBFCFD
+            border #D9DDE3 | text-primary #1B1F26 | text-secondary #4A525E
+            text-muted #7A838F | primary #2F4858 | primary-foreground #FFFFFF
+            success #1F7A54 | warning #B26A00 | danger #B42318 | info #2563EB
+            accent #6E56CF
+     dark:  background #0E1116 | surface #151A21 | surface-raised #1B222B
+            border #2A323D | text-primary #E7ECF2 | text-secondary #A9B4C0
+            text-muted #6E7A87 | primary #7EA8CE | primary-foreground #0E1116
+            success #3FBF8F | warning #E0A03C | danger #F2695B | info #6BA6F5
+            accent #A78BFA
+   變化 02 深海軍藍 Deep Navy Ops
+     light: background #EEF2F7 | surface #FFFFFF | surface-raised #F8FAFD
+            border #D3DBE6 | text-primary #0F1D2E | text-secondary #3C4C60
+            text-muted #6B7A8D | primary #14395E | primary-foreground #FFFFFF
+            success #1D6F5C | warning #A9741A | danger #A62B2B | info #1F5FA8
+            accent #C2703A
+     dark:  background #08101A | surface #0E1926 | surface-raised #142234
+            border #23334A | text-primary #E6EDF5 | text-secondary #9FB0C4
+            text-muted #64788F | primary #6C9FD4 | primary-foreground #06101C
+            success #3FAE93 | warning #D6A244 | danger #E06A5E | info #6FA8E8
+            accent #D9975A
+   變化 03 倉庫琥珀 Warehouse Amber
+     light: background #F6F1E7 | surface #FFFDF8 | surface-raised #FFFFFF
+            border #E0D6C2 | text-primary #2C2620 | text-secondary #574E3E
+            text-muted #8A7F6A | primary #8C4A0F | primary-foreground #FFF6E8
+            success #4A7C2A | warning #B08000 | danger #A33524 | info #1F6D8C
+            accent #D98324
+     dark:  background #14100B | surface #1D1812 | surface-raised #262018
+            border #3A3025 | text-primary #F0E7D8 | text-secondary #C4B7A3
+            text-muted #93866F | primary #E09A4A | primary-foreground #1A1209
+            success #8FBF55 | warning #E0B33F | danger #E8776A | info #59A8C9
+            accent #F0B75E
+   變化 04 墨綠帳冊 Ledger Green
+     light: background #EDF1EC | surface #FBFCFA | surface-raised #FFFFFF
+            border #D3DCD0 | text-primary #17241C | text-secondary #43544A
+            text-muted #77887C | primary #1F5137 | primary-foreground #F2F8F2
+            success #2F7D4F | warning #96690A | danger #9E2B22 | info #1F6172
+            accent #8A5A12
+     dark:  background #0C1310 | surface #121B16 | surface-raised #19241D
+            border #2A3A2F | text-primary #E4EDE6 | text-secondary #A8BAAE
+            text-muted #6E8175 | primary #6FBF92 | primary-foreground #08120C
+            success #62C089 | warning #D8AC3E | danger #E07164 | info #5BB0C4
+            accent #C9A24A
+   變化 05 極簡墨黑 Monochrome Ink
+     light: background #FFFFFF | surface #FFFFFF | surface-raised #F6F6F5
+            border #DEDEDB | text-primary #111111 | text-secondary #4A4A48
+            text-muted #7C7C78 | primary #111111 | primary-foreground #FFFFFF
+            success #1F6B3C | warning #8A6100 | danger #A3231C | info #1F5C9E
+            accent #111111（刻意等同 primary：毛利不靠色相，靠字重與底線）
+     dark:  background #0A0A0A | surface #121212 | surface-raised #1A1A1A
+            border #2A2A2A | text-primary #F2F2F0 | text-secondary #A8A8A5
+            text-muted #75756F | primary #F2F2F0 | primary-foreground #0A0A0A
+            success #4FBE83 | warning #D6A33A | danger #EE6A5E | info #6BA4E8
+            accent #F2F2F0（同上，刻意不另取色相）
+   ============================================================ */
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  font-size:14px;
+  line-height:1.5;
+  background:#111315;
+  color:#E7E9EC;
+  font-variant-numeric:tabular-nums;
+}
+.wrap{max-width:1680px;margin:0 auto;padding:32px 24px 72px}
+.page-head{border-bottom:1px solid #2A2E33;padding-bottom:20px;margin-bottom:32px}
+.page-head h1{margin:0 0 8px;font-size:22px;letter-spacing:.02em}
+.page-head p{margin:0;color:#9AA1AA;font-size:13px;max-width:80ch}
+.legend{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:#8B929B}
+.legend b{color:#C9CFD6;font-weight:600}
+
+.theme{margin-bottom:44px;padding-bottom:32px;border-bottom:1px solid #24272B}
+.theme:last-child{border-bottom:none}
+.theme-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.theme-head .num{font-size:12px;letter-spacing:.14em;color:#7C848E;border:1px solid #2E3338;border-radius:999px;padding:2px 9px}
+.theme-head h2{margin:0;font-size:18px;color:#F2F4F6}
+.theme-head .en{font-size:13px;color:#8B929B;letter-spacing:.04em}
+.theme-head .reg{margin:6px 0 18px;font-size:13px;color:#A7AEB6;max-width:90ch}
+.theme-head .reg b{color:#D7DCE1;font-weight:600}
+
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:1080px){.modes{grid-template-columns:1fr}}
+
+.mode{border-radius:12px;padding:16px;border:1px solid #2A2E33;background:var(--background);color:var(--text-primary);min-width:0}
+.mode-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.mode-label::after{content:"";flex:1;height:1px;background:var(--border)}
+
+/* ---- token chips ---- */
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:6px;margin-bottom:16px}
+.chip{
+  display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:7px;
+  border:1px solid var(--border);background:var(--surface);min-width:0;
+}
+.swatch{width:16px;height:16px;border-radius:4px;flex:0 0 auto;border:1px solid rgba(0,0,0,.18);background:var(--sw)}
+.chip .role{font-size:11px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip .hex{margin-left:auto;font-size:10.5px;color:var(--text-muted);letter-spacing:.02em;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+
+/* ---- UI snippet ---- */
+.snippet{border:1px solid var(--border);border-radius:10px;background:var(--surface);overflow:hidden}
+.snip-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface-raised)}
+.snip-head .t{font-size:13px;font-weight:600;color:var(--text-primary)}
+.snip-head .m{font-size:11px;color:var(--text-muted)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead th{
+  text-align:left;font-weight:600;color:var(--text-muted);font-size:11px;letter-spacing:.06em;
+  padding:8px 14px;border-bottom:1px solid var(--border);background:var(--surface-raised);white-space:nowrap;
+}
+tbody td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text-secondary);white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even) td{background:var(--surface-raised)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+td.sku{color:var(--text-primary);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
+td.item{color:var(--text-primary)}
+td.loc{color:var(--text-secondary)}
+td.qty{text-align:right;color:var(--text-primary);font-variant-numeric:tabular-nums}
+td.price{text-align:right;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.tag{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11px;border:1px solid var(--border);color:var(--text-secondary);background:var(--surface-raised)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border)}
+@media (max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--surface);padding:10px 14px}
+.kpi .k{font-size:11px;color:var(--text-muted);letter-spacing:.04em}
+.kpi .v{font-size:17px;font-weight:650;color:var(--text-primary);margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:11px;font-weight:500;color:var(--text-muted);margin-left:3px}
+.kpi.profit{background:var(--surface-raised)}
+.kpi.profit .v{color:var(--accent)}
+
+.alerts{padding:10px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;font-size:12px}
+.alert{display:flex;align-items:center;gap:8px}
+.dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
+.dot.warn{background:var(--warning)} .dot.err{background:var(--danger)}
+.dot.ok{background:var(--success)} .dot.info{background:var(--info)}
+.alert.warn{color:var(--warning)} .alert.err{color:var(--danger)} .alert.ok{color:var(--success)} .alert.info{color:var(--info)}
+
+/* ---- per-variation accent treatments ---- */
+.theme-1 .snippet{border-radius:4px}
+.theme-1 .snip-head{border-left:3px solid var(--primary)}
+.theme-2 .snip-head{border-left:3px solid var(--primary)}
+.theme-2 .kpi.profit .v{border-bottom:2px solid var(--accent);padding-bottom:1px}
+.theme-3 .snippet{border-radius:14px}
+.theme-3 .kpi.profit{box-shadow:inset 0 -3px 0 var(--accent)}
+.theme-3 .snip-head{background:var(--primary);color:var(--primary-foreground)}
+.theme-3 .snip-head .t{color:var(--primary-foreground)} .theme-3 .snip-head .m{color:var(--primary-foreground);opacity:.75}
+.theme-3 .kpi.profit .v{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px}
+.theme-4 .kpi.profit .v::after{content:"";display:block;height:2px;background:var(--accent);margin-top:3px;opacity:.85}
+.theme-4 .snippet{border-left:3px solid var(--primary)}
+.theme-5 .snippet{border-radius:2px;border-color:var(--border)}
+.theme-5 .kpi.profit .v{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.theme-5 thead th{letter-spacing:.12em;border-bottom:1px solid var(--text-primary)}
+.theme-5 tbody td{border-bottom:1px dashed var(--border)}
+.theme-5 .kpi .v{font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page-head">
+    <h1>庫存管理系統 · 色彩主題比較（5 種變化）</h1>
+    <p>每個變化以真實的後台畫面（庫存清單 + 進銷貨統計 + 狀態訊息）呈現，並列出 14 個語意色 token 的實際色碼。淺色與深色並列，方便直接比對同一套結構在不同環境下的表現。請選擇一個變化，其色碼將直接寫入 DESIGN.md 的 token 集合。</p>
+    <div class="legend">
+      <span><b>Token 角色</b> background / surface / surface-raised / border / text-primary / text-secondary / text-muted / primary / primary-foreground / success / warning / danger / info / accent</span>
+      <span><b>accent</b>＝毛利強調色</span>
+    </div>
+  </header>
+
+  <!-- ===================== 01 ===================== -->
+  <section class="theme theme-1">
+    <div class="theme-head">
+      <span class="num">01</span>
+      <h2>精密石墨</h2>
+      <span class="en">Precision Graphite</span>
+    </div>
+    <p class="reg"><b>情緒註冊：</b>冷峻、緊湊、工程師的量測感。藍灰骨架把注意力壓在數字與格線上，像稽核用的儀表板而非業務用的後台。</p>
+    <div class="modes">
+
+      <div class="mode theme-1-light" style="--background:#F4F5F7;--surface:#FFFFFF;--surface-raised:#FBFCFD;--border:#D9DDE3;--text-primary:#1B1F26;--text-secondary:#4A525E;--text-muted:#7A838F;--primary:#2F4858;--primary-foreground:#FFFFFF;--success:#1F7A54;--warning:#B26A00;--danger:#B42318;--info:#2563EB;--accent:#6E56CF;">
+        <div class="mode-label">Light · 淺色</div>
+        <div class="chips">
+          <div class="chip"><span class="swatch" style="--sw:#F4F5F7"></span><span class="role">background</span><span class="hex">#F4F5F7</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FFFFFF"></span><span class="role">surface</span><span class="hex">#FFFFFF</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FBFCFD"></span><span class="role">surface-raised</span><span class="hex">#FBFCFD</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#D9DDE3"></span><span class="role">border</span><span class="hex">#D9DDE3</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1B1F26"></span><span class="role">text-primary</span><span class="hex">#1B1F26</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#4A525E"></span><span class="role">text-secondary</span><span class="hex">#4A525E</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#7A838F"></span><span class="role">text-muted</span><span class="hex">#7A838F</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#2F4858"></span><span class="role">primary</span><span class="hex">#2F4858</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FFFFFF"></span><span class="role">primary-foreground</span><span class="hex">#FFFFFF</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1F7A54"></span><span class="role">success</span><span class="hex">#1F7A54</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#B26A00"></span><span class="role">warning</span><span class="hex">#B26A00</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#B42318"></span><span class="role">danger</span><span class="hex">#B42318</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#2563EB"></span><span class="role">info</span><span class="hex">#2563EB</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#6E56CF"></span><span class="role">accent</span><span class="hex">#6E56CF</span></div>
+        </div>
+        <div class="snippet">
+          <div class="snip-head"><span class="t">庫存現況</span><span class="m">即時 · 2026-10-21 09:40</span></div>
+          <table>
+            <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">單價</th></tr></thead>
+            <tbody>
+              <tr><td class="sku">INV-000128</td><td class="item">六角螺絲 M8×40</td><td class="loc">B 倉 A-03</td><td class="qty">240</td><td class="price">12.50</td></tr>
+              <tr><td class="sku">INV-000201</td><td class="item">棉手套 L</td><td class="loc">C 倉 B-11</td><td class="qty">60</td><td class="price">85.00</td></tr>
+              <tr><td class="sku">INV-000377</td><td class="item">打包帶 PP 12mm</td><td class="loc">A 倉 C-07</td><td class="qty">1,280</td><td class="price">3.20</td></tr>
+            </tbody>
+          </table>
+          <div class="kpis">
+            <div class="kpi"><div class="k">今日入庫</div><div class="v">3<small>筆</small></div></div>
+            <div class="kpi"><div class="k">待補貨</div><div class="v">12<small>項</small></div></div>
+            <div class="kpi"><div class="k">今日銷貨</div><div class="v">4,358.13</div></div>
+            <div class="kpi profit"><div class="k">毛利</div><div class="v">375.00</div></div>
+          </div>
+          <div class="alerts">
+            <div class="alert warn"><span class="dot warn"></span><span>狀態：成本未設定</span></div>
+            <div class="alert err"><span class="dot err"></span><span>錯誤：可用數量不足</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mode theme-1-dark" style="--background:#0E1116;--surface:#151A21;--surface-raised:#1B222B;--border:#2A323D;--text-primary:#E7ECF2;--text-secondary:#A9B4C0;--text-muted:#6E7A87;--primary:#7EA8CE;--primary-foreground:#0E1116;--success:#3FBF8F;--warning:#E0A03C;--danger:#F2695B;--info:#6BA6F5;--accent:#A78BFA;">
+        <div class="mode-label">Dark · 深色</div>
+        <div class="chips">
+          <div class="chip"><span class="swatch" style="--sw:#0E1116"></span><span class="role">background</span><span class="hex">#0E1116</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#151A21"></span><span class="role">surface</span><span class="hex">#151A21</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1B222B"></span><span class="role">surface-raised</span><span class="hex">#1B222B</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#2A323D"></span><span class="role">border</span><span class="hex">#2A323D</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#E7ECF2"></span><span class="role">text-primary</span><span class="hex">#E7ECF2</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#A9B4C0"></span><span class="role">text-secondary</span><span class="hex">#A9B4C0</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#6E7A87"></span><span class="role">text-muted</span><span class="hex">#6E7A87</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#7EA8CE"></span><span class="role">primary</span><span class="hex">#7EA8CE</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#0E1116"></span><span class="role">primary-foreground</span><span class="hex">#0E1116</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#3FBF8F"></span><span class="role">success</span><span class="hex">#3FBF8F</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#E0A03C"></span><span class="role">warning</span><span class="hex">#E0A03C</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#F2695B"></span><span class="role">danger</span><span class="hex">#F2695B</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#6BA6F5"></span><span class="role">info</span><span class="hex">#6BA6F5</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#A78BFA"></span><span class="role">accent</span><span class="hex">#A78BFA</span></div>
+        </div>
+        <div class="snippet">
+          <div class="snip-head"><span class="t">庫存現況</span><span class="m">即時 · 2026-10-21 09:40</span></div>
+          <table>
+            <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">單價</th></tr></thead>
+            <tbody>
+              <tr><td class="sku">INV-000128</td><td class="item">六角螺絲 M8×40</td><td class="loc">B 倉 A-03</td><td class="qty">240</td><td class="price">12.50</td></tr>
+              <tr><td class="sku">INV-000201</td><td class="item">棉手套 L</td><td class="loc">C 倉 B-11</td><td class="qty">60</td><td class="price">85.00</td></tr>
+              <tr><td class="sku">INV-000377</td><td class="item">打包帶 PP 12mm</td><td class="loc">A 倉 C-07</td><td class="qty">1,280</td><td class="price">3.20</td></tr>
+            </tbody>
+          </table>
+          <div class="kpis">
+            <div class="kpi"><div class="k">今日入庫</div><div class="v">3<small>筆</small></div></div>
+            <div class="kpi"><div class="k">待補貨</div><div class="v">12<small>項</small></div></div>
+            <div class="kpi"><div class="k">今日銷貨</div><div class="v">4,358.13</div></div>
+            <div class="kpi profit"><div class="k">毛利</div><div class="v">375.00</div></div>
+          </div>
+          <div class="alerts">
+            <div class="alert warn"><span class="dot warn"></span><span>狀態：成本未設定</span></div>
+            <div class="alert err"><span class="dot err"></span><span>錯誤：可用數量不足</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 02 ===================== -->
+  <section class="theme theme-2">
+    <div class="theme-head">
+      <span class="num">02</span>
+      <h2>深海軍藍</h2>
+      <span class="en">Deep Navy Ops</span>
+    </div>
+    <p class="reg"><b>情緒註冊：</b>穩重、有權威感、像物流調度中心。深藍主色承載層級，銅色只留給毛利，讓「賺了多少」在整頁唯一發光。</p>
+    <div class="modes">
+
+      <div class="mode theme-2-light" style="--background:#EEF2F7;--surface:#FFFFFF;--surface-raised:#F8FAFD;--border:#D3DBE6;--text-primary:#0F1D2E;--text-secondary:#3C4C60;--text-muted:#6B7A8D;--primary:#14395E;--primary-foreground:#FFFFFF;--success:#1D6F5C;--warning:#A9741A;--danger:#A62B2B;--info:#1F5FA8;--accent:#C2703A;">
+        <div class="mode-label">Light · 淺色</div>
+        <div class="chips">
+          <div class="chip"><span class="swatch" style="--sw:#EEF2F7"></span><span class="role">background</span><span class="hex">#EEF2F7</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FFFFFF"></span><span class="role">surface</span><span class="hex">#FFFFFF</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#F8FAFD"></span><span class="role">surface-raised</span><span class="hex">#F8FAFD</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#D3DBE6"></span><span class="role">border</span><span class="hex">#D3DBE6</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#0F1D2E"></span><span class="role">text-primary</span><span class="hex">#0F1D2E</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#3C4C60"></span><span class="role">text-secondary</span><span class="hex">#3C4C60</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#6B7A8D"></span><span class="role">text-muted</span><span class="hex">#6B7A8D</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#14395E"></span><span class="role">primary</span><span class="hex">#14395E</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FFFFFF"></span><span class="role">primary-foreground</span><span class="hex">#FFFFFF</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1D6F5C"></span><span class="role">success</span><span class="hex">#1D6F5C</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#A9741A"></span><span class="role">warning</span><span class="hex">#A9741A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#A62B2B"></span><span class="role">danger</span><span class="hex">#A62B2B</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1F5FA8"></span><span class="role">info</span><span class="hex">#1F5FA8</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#C2703A"></span><span class="role">accent</span><span class="hex">#C2703A</span></div>
+        </div>
+        <div class="snippet">
+          <div class="snip-head"><span class="t">庫存現況</span><span class="m">即時 · 2026-10-21 09:40</span></div>
+          <table>
+            <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">單價</th></tr></thead>
+            <tbody>
+              <tr><td class="sku">INV-000128</td><td class="item">六角螺絲 M8×40</td><td class="loc">B 倉 A-03</td><td class="qty">240</td><td class="price">12.50</td></tr>
+              <tr><td class="sku">INV-000201</td><td class="item">棉手套 L</td><td class="loc">C 倉 B-11</td><td class="qty">60</td><td class="price">85.00</td></tr>
+              <tr><td class="sku">INV-000377</td><td class="item">打包帶 PP 12mm</td><td class="loc">A 倉 C-07</td><td class="qty">1,280</td><td class="price">3.20</td></tr>
+            </tbody>
+          </table>
+          <div class="kpis">
+            <div class="kpi"><div class="k">今日入庫</div><div class="v">3<small>筆</small></div></div>
+            <div class="kpi"><div class="k">待補貨</div><div class="v">12<small>項</small></div></div>
+            <div class="kpi"><div class="k">今日銷貨</div><div class="v">4,358.13</div></div>
+            <div class="kpi profit"><div class="k">毛利</div><div class="v">375.00</div></div>
+          </div>
+          <div class="alerts">
+            <div class="alert warn"><span class="dot warn"></span><span>狀態：成本未設定</span></div>
+            <div class="alert err"><span class="dot err"></span><span>錯誤：可用數量不足</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mode theme-2-dark" style="--background:#08101A;--surface:#0E1926;--surface-raised:#142234;--border:#23334A;--text-primary:#E6EDF5;--text-secondary:#9FB0C4;--text-muted:#64788F;--primary:#6C9FD4;--primary-foreground:#06101C;--success:#3FAE93;--warning:#D6A244;--danger:#E06A5E;--info:#6FA8E8;--accent:#D9975A;">
+        <div class="mode-label">Dark · 深色</div>
+        <div class="chips">
+          <div class="chip"><span class="swatch" style="--sw:#08101A"></span><span class="role">background</span><span class="hex">#08101A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#0E1926"></span><span class="role">surface</span><span class="hex">#0E1926</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#142234"></span><span class="role">surface-raised</span><span class="hex">#142234</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#23334A"></span><span class="role">border</span><span class="hex">#23334A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#E6EDF5"></span><span class="role">text-primary</span><span class="hex">#E6EDF5</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#9FB0C4"></span><span class="role">text-secondary</span><span class="hex">#9FB0C4</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#64788F"></span><span class="role">text-muted</span><span class="hex">#64788F</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#6C9FD4"></span><span class="role">primary</span><span class="hex">#6C9FD4</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#06101C"></span><span class="role">primary-foreground</span><span class="hex">#06101C</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#3FAE93"></span><span class="role">success</span><span class="hex">#3FAE93</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#D6A244"></span><span class="role">warning</span><span class="hex">#D6A244</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#E06A5E"></span><span class="role">danger</span><span class="hex">#E06A5E</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#6FA8E8"></span><span class="role">info</span><span class="hex">#6FA8E8</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#D9975A"></span><span class="role">accent</span><span class="hex">#D9975A</span></div>
+        </div>
+        <div class="snippet">
+          <div class="snip-head"><span class="t">庫存現況</span><span class="m">即時 · 2026-10-21 09:40</span></div>
+          <table>
+            <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">單價</th></tr></thead>
+            <tbody>
+              <tr><td class="sku">INV-000128</td><td class="item">六角螺絲 M8×40</td><td class="loc">B 倉 A-03</td><td class="qty">240</td><td class="price">12.50</td></tr>
+              <tr><td class="sku">INV-000201</td><td class="item">棉手套 L</td><td class="loc">C 倉 B-11</td><td class="qty">60</td><td class="price">85.00</td></tr>
+              <tr><td class="sku">INV-000377</td><td class="item">打包帶 PP 12mm</td><td class="loc">A 倉 C-07</td><td class="qty">1,280</td><td class="price">3.20</td></tr>
+            </tbody>
+          </table>
+          <div class="kpis">
+            <div class="kpi"><div class="k">今日入庫</div><div class="v">3<small>筆</small></div></div>
+            <div class="kpi"><div class="k">待補貨</div><div class="v">12<small>項</small></div></div>
+            <div class="kpi"><div class="k">今日銷貨</div><div class="v">4,358.13</div></div>
+            <div class="kpi profit"><div class="k">毛利</div><div class="v">375.00</div></div>
+          </div>
+          <div class="alerts">
+            <div class="alert warn"><span class="dot warn"></span><span>狀態：成本未設定</span></div>
+            <div class="alert err"><span class="dot err"></span><span>錯誤：可用數量不足</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 03 ===================== -->
+  <section class="theme theme-3">
+    <div class="theme-head">
+      <span class="num">03</span>
+      <h2>倉庫琥珀</h2>
+      <span class="en">Warehouse Amber</span>
+    </div>
+    <p class="reg"><b>情緒註冊：</b>務實、有人味、帶工廠與紙箱的溫度。牛皮紙底色與焦糖色標題欄，讓長時間值班的倉庫員不覺得介面冷漠。</p>
+    <div class="modes">
+
+      <div class="mode theme-3-light" style="--background:#F6F1E7;--surface:#FFFDF8;--surface-raised:#FFFFFF;--border:#E0D6C2;--text-primary:#2C2620;--text-secondary:#574E3E;--text-muted:#8A7F6A;--primary:#8C4A0F;--primary-foreground:#FFF6E8;--success:#4A7C2A;--warning:#B08000;--danger:#A33524;--info:#1F6D8C;--accent:#D98324;">
+        <div class="mode-label">Light · 淺色</div>
+        <div class="chips">
+          <div class="chip"><span class="swatch" style="--sw:#F6F1E7"></span><span class="role">background</span><span class="hex">#F6F1E7</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FFFDF8"></span><span class="role">surface</span><span class="hex">#FFFDF8</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FFFFFF"></span><span class="role">surface-raised</span><span class="hex">#FFFFFF</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#E0D6C2"></span><span class="role">border</span><span class="hex">#E0D6C2</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#2C2620"></span><span class="role">text-primary</span><span class="hex">#2C2620</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#574E3E"></span><span class="role">text-secondary</span><span class="hex">#574E3E</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#8A7F6A"></span><span class="role">text-muted</span><span class="hex">#8A7F6A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#8C4A0F"></span><span class="role">primary</span><span class="hex">#8C4A0F</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FFF6E8"></span><span class="role">primary-foreground</span><span class="hex">#FFF6E8</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#4A7C2A"></span><span class="role">success</span><span class="hex">#4A7C2A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#B08000"></span><span class="role">warning</span><span class="hex">#B08000</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#A33524"></span><span class="role">danger</span><span class="hex">#A33524</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1F6D8C"></span><span class="role">info</span><span class="hex">#1F6D8C</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#D98324"></span><span class="role">accent</span><span class="hex">#D98324</span></div>
+        </div>
+        <div class="snippet">
+          <div class="snip-head"><span class="t">庫存現況</span><span class="m">即時 · 2026-10-21 09:40</span></div>
+          <table>
+            <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">單價</th></tr></thead>
+            <tbody>
+              <tr><td class="sku">INV-000128</td><td class="item">六角螺絲 M8×40</td><td class="loc">B 倉 A-03</td><td class="qty">240</td><td class="price">12.50</td></tr>
+              <tr><td class="sku">INV-000201</td><td class="item">棉手套 L</td><td class="loc">C 倉 B-11</td><td class="qty">60</td><td class="price">85.00</td></tr>
+              <tr><td class="sku">INV-000377</td><td class="item">打包帶 PP 12mm</td><td class="loc">A 倉 C-07</td><td class="qty">1,280</td><td class="price">3.20</td></tr>
+            </tbody>
+          </table>
+          <div class="kpis">
+            <div class="kpi"><div class="k">今日入庫</div><div class="v">3<small>筆</small></div></div>
+            <div class="kpi"><div class="k">待補貨</div><div class="v">12<small>項</small></div></div>
+            <div class="kpi"><div class="k">今日銷貨</div><div class="v">4,358.13</div></div>
+            <div class="kpi profit"><div class="k">毛利</div><div class="v">375.00</div></div>
+          </div>
+          <div class="alerts">
+            <div class="alert warn"><span class="dot warn"></span><span>狀態：成本未設定</span></div>
+            <div class="alert err"><span class="dot err"></span><span>錯誤：可用數量不足</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mode theme-3-dark" style="--background:#14100B;--surface:#1D1812;--surface-raised:#262018;--border:#3A3025;--text-primary:#F0E7D8;--text-secondary:#C4B7A3;--text-muted:#93866F;--primary:#E09A4A;--primary-foreground:#1A1209;--success:#8FBF55;--warning:#E0B33F;--danger:#E8776A;--info:#59A8C9;--accent:#F0B75E;">
+        <div class="mode-label">Dark · 深色</div>
+        <div class="chips">
+          <div class="chip"><span class="swatch" style="--sw:#14100B"></span><span class="role">background</span><span class="hex">#14100B</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1D1812"></span><span class="role">surface</span><span class="hex">#1D1812</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#262018"></span><span class="role">surface-raised</span><span class="hex">#262018</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#3A3025"></span><span class="role">border</span><span class="hex">#3A3025</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#F0E7D8"></span><span class="role">text-primary</span><span class="hex">#F0E7D8</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#C4B7A3"></span><span class="role">text-secondary</span><span class="hex">#C4B7A3</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#93866F"></span><span class="role">text-muted</span><span class="hex">#93866F</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#E09A4A"></span><span class="role">primary</span><span class="hex">#E09A4A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1A1209"></span><span class="role">primary-foreground</span><span class="hex">#1A1209</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#8FBF55"></span><span class="role">success</span><span class="hex">#8FBF55</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#E0B33F"></span><span class="role">warning</span><span class="hex">#E0B33F</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#E8776A"></span><span class="role">danger</span><span class="hex">#E8776A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#59A8C9"></span><span class="role">info</span><span class="hex">#59A8C9</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#F0B75E"></span><span class="role">accent</span><span class="hex">#F0B75E</span></div>
+        </div>
+        <div class="snippet">
+          <div class="snip-head"><span class="t">庫存現況</span><span class="m">即時 · 2026-10-21 09:40</span></div>
+          <table>
+            <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">單價</th></tr></thead>
+            <tbody>
+              <tr><td class="sku">INV-000128</td><td class="item">六角螺絲 M8×40</td><td class="loc">B 倉 A-03</td><td class="qty">240</td><td class="price">12.50</td></tr>
+              <tr><td class="sku">INV-000201</td><td class="item">棉手套 L</td><td class="loc">C 倉 B-11</td><td class="qty">60</td><td class="price">85.00</td></tr>
+              <tr><td class="sku">INV-000377</td><td class="item">打包帶 PP 12mm</td><td class="loc">A 倉 C-07</td><td class="qty">1,280</td><td class="price">3.20</td></tr>
+            </tbody>
+          </table>
+          <div class="kpis">
+            <div class="kpi"><div class="k">今日入庫</div><div class="v">3<small>筆</small></div></div>
+            <div class="kpi"><div class="k">待補貨</div><div class="v">12<small>項</small></div></div>
+            <div class="kpi"><div class="k">今日銷貨</div><div class="v">4,358.13</div></div>
+            <div class="kpi profit"><div class="k">毛利</div><div class="v">375.00</div></div>
+          </div>
+          <div class="alerts">
+            <div class="alert warn"><span class="dot warn"></span><span>狀態：成本未設定</span></div>
+            <div class="alert err"><span class="dot err"></span><span>錯誤：可用數量不足</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 04 ===================== -->
+  <section class="theme theme-4">
+    <div class="theme-head">
+      <span class="num">04</span>
+      <h2>墨綠帳冊</h2>
+      <span class="en">Ledger Green</span>
+    </div>
+    <p class="reg"><b>情緒註冊：</b>沉穩、傳統、可信。像一本被整理過的出入庫帳冊，森林綠帶一點手工感，安靜但有份量。</p>
+    <div class="modes">
+
+      <div class="mode theme-4-light" style="--background:#EDF1EC;--surface:#FBFCFA;--surface-raised:#FFFFFF;--border:#D3DCD0;--text-primary:#17241C;--text-secondary:#43544A;--text-muted:#77887C;--primary:#1F5137;--primary-foreground:#F2F8F2;--success:#2F7D4F;--warning:#96690A;--danger:#9E2B22;--info:#1F6172;--accent:#8A5A12;">
+        <div class="mode-label">Light · 淺色</div>
+        <div class="chips">
+          <div class="chip"><span class="swatch" style="--sw:#EDF1EC"></span><span class="role">background</span><span class="hex">#EDF1EC</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FBFCFA"></span><span class="role">surface</span><span class="hex">#FBFCFA</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FFFFFF"></span><span class="role">surface-raised</span><span class="hex">#FFFFFF</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#D3DCD0"></span><span class="role">border</span><span class="hex">#D3DCD0</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#17241C"></span><span class="role">text-primary</span><span class="hex">#17241C</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#43544A"></span><span class="role">text-secondary</span><span class="hex">#43544A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#77887C"></span><span class="role">text-muted</span><span class="hex">#77887C</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1F5137"></span><span class="role">primary</span><span class="hex">#1F5137</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#F2F8F2"></span><span class="role">primary-foreground</span><span class="hex">#F2F8F2</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#2F7D4F"></span><span class="role">success</span><span class="hex">#2F7D4F</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#96690A"></span><span class="role">warning</span><span class="hex">#96690A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#9E2B22"></span><span class="role">danger</span><span class="hex">#9E2B22</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1F6172"></span><span class="role">info</span><span class="hex">#1F6172</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#8A5A12"></span><span class="role">accent</span><span class="hex">#8A5A12</span></div>
+        </div>
+        <div class="snippet">
+          <div class="snip-head"><span class="t">庫存現況</span><span class="m">即時 · 2026-10-21 09:40</span></div>
+          <table>
+            <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">單價</th></tr></thead>
+            <tbody>
+              <tr><td class="sku">INV-000128</td><td class="item">六角螺絲 M8×40</td><td class="loc">B 倉 A-03</td><td class="qty">240</td><td class="price">12.50</td></tr>
+              <tr><td class="sku">INV-000201</td><td class="item">棉手套 L</td><td class="loc">C 倉 B-11</td><td class="qty">60</td><td class="price">85.00</td></tr>
+              <tr><td class="sku">INV-000377</td><td class="item">打包帶 PP 12mm</td><td class="loc">A 倉 C-07</td><td class="qty">1,280</td><td class="price">3.20</td></tr>
+            </tbody>
+          </table>
+          <div class="kpis">
+            <div class="kpi"><div class="k">今日入庫</div><div class="v">3<small>筆</small></div></div>
+            <div class="kpi"><div class="k">待補貨</div><div class="v">12<small>項</small></div></div>
+            <div class="kpi"><div class="k">今日銷貨</div><div class="v">4,358.13</div></div>
+            <div class="kpi profit"><div class="k">毛利</div><div class="v">375.00</div></div>
+          </div>
+          <div class="alerts">
+            <div class="alert warn"><span class="dot warn"></span><span>狀態：成本未設定</span></div>
+            <div class="alert err"><span class="dot err"></span><span>錯誤：可用數量不足</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mode theme-4-dark" style="--background:#0C1310;--surface:#121B16;--surface-raised:#19241D;--border:#2A3A2F;--text-primary:#E4EDE6;--text-secondary:#A8BAAE;--text-muted:#6E8175;--primary:#6FBF92;--primary-foreground:#08120C;--success:#62C089;--warning:#D8AC3E;--danger:#E07164;--info:#5BB0C4;--accent:#C9A24A;">
+        <div class="mode-label">Dark · 深色</div>
+        <div class="chips">
+          <div class="chip"><span class="swatch" style="--sw:#0C1310"></span><span class="role">background</span><span class="hex">#0C1310</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#121B16"></span><span class="role">surface</span><span class="hex">#121B16</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#19241D"></span><span class="role">surface-raised</span><span class="hex">#19241D</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#2A3A2F"></span><span class="role">border</span><span class="hex">#2A3A2F</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#E4EDE6"></span><span class="role">text-primary</span><span class="hex">#E4EDE6</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#A8BAAE"></span><span class="role">text-secondary</span><span class="hex">#A8BAAE</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#6E8175"></span><span class="role">text-muted</span><span class="hex">#6E8175</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#6FBF92"></span><span class="role">primary</span><span class="hex">#6FBF92</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#08120C"></span><span class="role">primary-foreground</span><span class="hex">#08120C</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#62C089"></span><span class="role">success</span><span class="hex">#62C089</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#D8AC3E"></span><span class="role">warning</span><span class="hex">#D8AC3E</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#E07164"></span><span class="role">danger</span><span class="hex">#E07164</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#5BB0C4"></span><span class="role">info</span><span class="hex">#5BB0C4</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#C9A24A"></span><span class="role">accent</span><span class="hex">#C9A24A</span></div>
+        </div>
+        <div class="snippet">
+          <div class="snip-head"><span class="t">庫存現況</span><span class="m">即時 · 2026-10-21 09:40</span></div>
+          <table>
+            <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">單價</th></tr></thead>
+            <tbody>
+              <tr><td class="sku">INV-000128</td><td class="item">六角螺絲 M8×40</td><td class="loc">B 倉 A-03</td><td class="qty">240</td><td class="price">12.50</td></tr>
+              <tr><td class="sku">INV-000201</td><td class="item">棉手套 L</td><td class="loc">C 倉 B-11</td><td class="qty">60</td><td class="price">85.00</td></tr>
+              <tr><td class="sku">INV-000377</td><td class="item">打包帶 PP 12mm</td><td class="loc">A 倉 C-07</td><td class="qty">1,280</td><td class="price">3.20</td></tr>
+            </tbody>
+          </table>
+          <div class="kpis">
+            <div class="kpi"><div class="k">今日入庫</div><div class="v">3<small>筆</small></div></div>
+            <div class="kpi"><div class="k">待補貨</div><div class="v">12<small>項</small></div></div>
+            <div class="kpi"><div class="k">今日銷貨</div><div class="v">4,358.13</div></div>
+            <div class="kpi profit"><div class="k">毛利</div><div class="v">375.00</div></div>
+          </div>
+          <div class="alerts">
+            <div class="alert warn"><span class="dot warn"></span><span>狀態：成本未設定</span></div>
+            <div class="alert err"><span class="dot err"></span><span>錯誤：可用數量不足</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== 05 ===================== -->
+  <section class="theme theme-5">
+    <div class="theme-head">
+      <span class="num">05</span>
+      <h2>極簡墨黑</h2>
+      <span class="en">Monochrome Ink</span>
+    </div>
+    <p class="reg"><b>情緒註冊：</b>克制、絕對清晰、零情緒。幾乎無彩度，只有狀態色與數字粗細在說話，適合高密度表格與長時間作業。</p>
+    <div class="modes">
+
+      <div class="mode theme-5-light" style="--background:#FFFFFF;--surface:#FFFFFF;--surface-raised:#F6F6F5;--border:#DEDEDB;--text-primary:#111111;--text-secondary:#4A4A48;--text-muted:#7C7C78;--primary:#111111;--primary-foreground:#FFFFFF;--success:#1F6B3C;--warning:#8A6100;--danger:#A3231C;--info:#1F5C9E;--accent:#111111;">
+        <div class="mode-label">Light · 淺色</div>
+        <div class="chips">
+          <div class="chip"><span class="swatch" style="--sw:#FFFFFF"></span><span class="role">background</span><span class="hex">#FFFFFF</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FFFFFF"></span><span class="role">surface</span><span class="hex">#FFFFFF</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#F6F6F5"></span><span class="role">surface-raised</span><span class="hex">#F6F6F5</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#DEDEDB"></span><span class="role">border</span><span class="hex">#DEDEDB</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#111111"></span><span class="role">text-primary</span><span class="hex">#111111</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#4A4A48"></span><span class="role">text-secondary</span><span class="hex">#4A4A48</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#7C7C78"></span><span class="role">text-muted</span><span class="hex">#7C7C78</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#111111"></span><span class="role">primary</span><span class="hex">#111111</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#FFFFFF"></span><span class="role">primary-foreground</span><span class="hex">#FFFFFF</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1F6B3C"></span><span class="role">success</span><span class="hex">#1F6B3C</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#8A6100"></span><span class="role">warning</span><span class="hex">#8A6100</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#A3231C"></span><span class="role">danger</span><span class="hex">#A3231C</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1F5C9E"></span><span class="role">info</span><span class="hex">#1F5C9E</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#111111"></span><span class="role">accent</span><span class="hex">#111111</span></div>
+        </div>
+        <div class="snippet">
+          <div class="snip-head"><span class="t">庫存現況</span><span class="m">即時 · 2026-10-21 09:40</span></div>
+          <table>
+            <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">單價</th></tr></thead>
+            <tbody>
+              <tr><td class="sku">INV-000128</td><td class="item">六角螺絲 M8×40</td><td class="loc">B 倉 A-03</td><td class="qty">240</td><td class="price">12.50</td></tr>
+              <tr><td class="sku">INV-000201</td><td class="item">棉手套 L</td><td class="loc">C 倉 B-11</td><td class="qty">60</td><td class="price">85.00</td></tr>
+              <tr><td class="sku">INV-000377</td><td class="item">打包帶 PP 12mm</td><td class="loc">A 倉 C-07</td><td class="qty">1,280</td><td class="price">3.20</td></tr>
+            </tbody>
+          </table>
+          <div class="kpis">
+            <div class="kpi"><div class="k">今日入庫</div><div class="v">3<small>筆</small></div></div>
+            <div class="kpi"><div class="k">待補貨</div><div class="v">12<small>項</small></div></div>
+            <div class="kpi"><div class="k">今日銷貨</div><div class="v">4,358.13</div></div>
+            <div class="kpi profit"><div class="k">毛利</div><div class="v">375.00</div></div>
+          </div>
+          <div class="alerts">
+            <div class="alert warn"><span class="dot warn"></span><span>狀態：成本未設定</span></div>
+            <div class="alert err"><span class="dot err"></span><span>錯誤：可用數量不足</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mode theme-5-dark" style="--background:#0A0A0A;--surface:#121212;--surface-raised:#1A1A1A;--border:#2A2A2A;--text-primary:#F2F2F0;--text-secondary:#A8A8A5;--text-muted:#75756F;--primary:#F2F2F0;--primary-foreground:#0A0A0A;--success:#4FBE83;--warning:#D6A33A;--danger:#EE6A5E;--info:#6BA4E8;--accent:#F2F2F0;">
+        <div class="mode-label">Dark · 深色</div>
+        <div class="chips">
+          <div class="chip"><span class="swatch" style="--sw:#0A0A0A"></span><span class="role">background</span><span class="hex">#0A0A0A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#121212"></span><span class="role">surface</span><span class="hex">#121212</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#1A1A1A"></span><span class="role">surface-raised</span><span class="hex">#1A1A1A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#2A2A2A"></span><span class="role">border</span><span class="hex">#2A2A2A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#F2F2F0"></span><span class="role">text-primary</span><span class="hex">#F2F2F0</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#A8A8A5"></span><span class="role">text-secondary</span><span class="hex">#A8A8A5</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#75756F"></span><span class="role">text-muted</span><span class="hex">#75756F</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#F2F2F0"></span><span class="role">primary</span><span class="hex">#F2F2F0</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#0A0A0A"></span><span class="role">primary-foreground</span><span class="hex">#0A0A0A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#4FBE83"></span><span class="role">success</span><span class="hex">#4FBE83</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#D6A33A"></span><span class="role">warning</span><span class="hex">#D6A33A</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#EE6A5E"></span><span class="role">danger</span><span class="hex">#EE6A5E</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#6BA4E8"></span><span class="role">info</span><span class="hex">#6BA4E8</span></div>
+          <div class="chip"><span class="swatch" style="--sw:#F2F2F0"></span><span class="role">accent</span><span class="hex">#F2F2F0</span></div>
+        </div>
+        <div class="snippet">
+          <div class="snip-head"><span class="t">庫存現況</span><span class="m">即時 · 2026-10-21 09:40</span></div>
+          <table>
+            <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">單價</th></tr></thead>
+            <tbody>
+              <tr><td class="sku">INV-000128</td><td class="item">六角螺絲 M8×40</td><td class="loc">B 倉 A-03</td><td class="qty">240</td><td class="price">12.50</td></tr>
+              <tr><td class="sku">INV-000201</td><td class="item">棉手套 L</td><td class="loc">C 倉 B-11</td><td class="qty">60</td><td class="price">85.00</td></tr>
+              <tr><td class="sku">INV-000377</td><td class="item">打包帶 PP 12mm</td><td class="loc">A 倉 C-07</td><td class="qty">1,280</td><td class="price">3.20</td></tr>
+            </tbody>
+          </table>
+          <div class="kpis">
+            <div class="kpi"><div class="k">今日入庫</div><div class="v">3<small>筆</small></div></div>
+            <div class="kpi"><div class="k">待補貨</div><div class="v">12<small>項</small></div></div>
+            <div class="kpi"><div class="k">今日銷貨</div><div class="v">4,358.13</div></div>
+            <div class="kpi profit"><div class="k">毛利</div><div class="v">375.00</div></div>
+          </div>
+          <div class="alerts">
+            <div class="alert warn"><span class="dot warn"></span><span>狀態：成本未設定</span></div>
+            <div class="alert err"><span class="dot err"></span><span>錯誤：可用數量不足</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

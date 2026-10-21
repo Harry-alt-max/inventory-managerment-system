@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>關鍵畫面 — 登入｜庫存管理系統</title>
+<style>
+/* ============================================================
+   KEY SCREEN — 登入（/login）
+   governed by:
+     EXPERIENCE.md § Information Architecture 全域框架（登入列）
+     EXPERIENCE.md § Voice and Tone 規則（登入失敗 / 錯誤先說發生什麼再說怎麼修）
+     EXPERIENCE.md § State Patterns → 登入失敗（帳號欄不清空、密碼欄清空、計數提示「第 N 次」）
+     EXPERIENCE.md § State Patterns → 帳號鎖定（剩餘鎖定時間與解鎖說明）
+     EXPERIENCE.md § Component Patterns → 語系切換（即時切換、保留狀態）
+     EXPERIENCE.md § Accessibility Floor（可讀標籤、aria-describedby、狀態不可只靠顏色）
+     DESIGN.md § Colors（語意 token：primary / danger / warning / text-muted）
+     DESIGN.md § Typography（14px 內文、12px 欄位說明、數字等寬）
+     DESIGN.md § Layout & Spacing（4px 基準階梯、卡片 16px 內距）
+     DESIGN.md § Shapes（輸入框 6px 圓角、卡片 12px 圓角、徽章 pill）
+     DESIGN.md § Elevation & Depth（card-shadow / card-shadow-raised）
+     .working/direction-bright-workbench.html（明亮工作台：瀏覽器外框、卡片 + 細邊框 + 輕陰影）
+   ============================================================ */
+:root{
+  --bg:#F6F1E7; --surface:#FFFDF8; --raised:#FFFFFF; --border:#E0D6C2;
+  --ink:#2C2620; --ink2:#574E3E; --muted:#8A7F6A;
+  --primary:#8C4A0F; --primary-fg:#FFF6E8;
+  --success:#4A7C2A; --warning:#B08000; --danger:#A33524; --info:#1F6D8C; --accent:#D98324;
+  --tint-primary:#F3EBE0; --tint-danger:#F5E9E2; --tint-warning:#F7F0DF;
+  --stripe:rgba(140,74,15,.035);
+  --shadow:0 1px 2px rgba(44,38,32,.06),0 4px 12px rgba(44,38,32,.05);
+  --shadow-raised:0 2px 4px rgba(44,38,32,.08),0 12px 28px rgba(44,38,32,.08);
+  --font-sans:'Inter','Noto Sans TC','PingFang TC','Microsoft JhengHei','Microsoft JhengHei UI',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-mono:'JetBrains Mono','SFMono-Regular',Consolas,'Liberation Mono',monospace;
+}
+.dark{
+  --bg:#14100B; --surface:#1D1812; --raised:#262018; --border:#3A3025;
+  --ink:#F0E7D8; --ink2:#C4B7A3; --muted:#93866F;
+  --primary:#E09A4A; --primary-fg:#1A1209;
+  --success:#8FBF55; --warning:#E0B33F; --danger:#E8776A; --info:#59A8C9; --accent:#F0B75E;
+  --tint-primary:#302517; --tint-danger:#31211B; --tint-warning:#302716;
+  --stripe:rgba(240,183,94,.04);
+  --shadow:0 1px 2px rgba(0,0,0,.4); --shadow-raised:0 12px 28px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#EDE5D6;color:var(--ink);
+  font-family:var(--font-sans);font-size:14px;line-height:1.55;
+  font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;
+  padding:32px 24px 56px;
+}
+.stage{max-width:1400px;margin:0 auto}
+.hd{margin-bottom:22px}
+.kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--primary)}
+.hd h1{font-size:26px;font-weight:600;letter-spacing:-.01em;margin:6px 0 8px}
+.hd p{color:var(--ink2);max-width:880px;line-height:1.8}
+.grid{display:flex;gap:22px;flex-wrap:wrap;justify-content:center}
+
+/* browser frame */
+.frame{width:392px;background:var(--bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-raised)}
+.bar{display:flex;align-items:center;gap:12px;background:var(--raised);padding:9px 14px;border-bottom:1px solid var(--border)}
+.dots{display:flex;gap:6px}
+.dots i{width:11px;height:11px;border-radius:50%;background:#CFC5B0;display:block}
+.dark .dots i{background:#4A3F2F}
+.url{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-family:var(--font-mono);font-size:11.5px;color:var(--muted);padding:5px 10px}
+.url b{color:var(--ink2);font-weight:500}
+.fnote{font-size:11.5px;color:var(--muted);padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);font-family:var(--font-mono)}
+
+/* login */
+.wrap{padding:44px 30px 40px;display:flex;justify-content:center}
+.card{width:100%;max-width:340px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:26px 24px 22px;box-shadow:var(--shadow)}
+.brand{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:22px;text-align:center}
+.mk{width:38px;height:38px;border-radius:10px;background:var(--primary);color:var(--primary-fg);display:grid;place-items:center;font-size:18px;font-weight:600}
+.brand h2{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.brand span{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-family:var(--font-mono)}
+.field{margin-bottom:14px}
+label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:6px}
+input[type=text],input[type=password]{
+  width:100%;height:36px;border:1px solid var(--border);border-radius:6px;background:var(--raised);
+  color:var(--ink);font-family:var(--font-sans);font-size:14px;padding:0 12px;
+}
+input::placeholder{color:var(--muted)}
+input:focus{outline:2px solid var(--primary);outline-offset:2px}
+input[aria-invalid=true]{border-color:var(--danger)}
+.err{display:flex;gap:7px;align-items:flex-start;color:var(--danger);font-size:12px;margin-top:6px;line-height:1.5}
+.err .dot{width:6px;height:6px;border-radius:50%;background:var(--danger);margin-top:6px;flex:0 0 auto}
+.btn{font-family:var(--font-sans);font-size:14px;font-weight:500;height:36px;padding:0 18px;border-radius:6px;border:1px solid var(--border);background:var(--raised);color:var(--ink2)}
+.btn.pri{width:100%;background:var(--primary);border-color:var(--primary);color:var(--primary-fg);font-weight:600;margin-top:4px}
+.hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6}
+.sep{display:flex;align-items:center;gap:10px;margin:20px 0 14px}
+.sep:before,.sep:after{content:"";height:1px;background:var(--border);flex:1}
+.sep span{font-size:11.5px;color:var(--muted)}
+.seg{display:flex;gap:4px;background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:3px}
+.seg button{flex:1;font-family:var(--font-sans);font-size:12.5px;font-weight:500;color:var(--ink2);background:transparent;border:0;border-radius:999px;padding:5px 10px;white-space:nowrap}
+.seg button.on{background:var(--primary);color:var(--primary-fg)}
+.seg.sm button{padding:4px 9px;font-size:12px}
+.foot{margin-top:20px;padding-top:14px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);line-height:1.7}
+.legend{margin-top:26px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 22px;font-size:13px;color:var(--ink2);line-height:1.9}
+.legend b{color:var(--ink);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <div class="hd">
+    <div class="kicker">Key Screen 01 — 登入 /login</div>
+    <h1>登入畫面：預設、登入失敗、深色模式</h1>
+    <p>同一版型以三種狀態呈現。登入失敗時帳號欄保留、密碼欄清空，表單內訊息說明發生什麼並附第 N 次計數；語系與色彩模式為即時切換，置於卡片下方，與頂列的切換器共用同一組 token。</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- STATE A · 預設 -->
+    <section class="frame">
+      <div class="bar">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <span class="url">app://inventory.local / login</span>
+      </div>
+      <div class="fnote">狀態 A — 預設（尚未送出）</div>
+      <div class="wrap">
+        <div class="card">
+          <div class="brand">
+            <span class="mk">庫</span>
+            <h2>庫存管理系統</h2>
+            <span>Inventory Management</span>
+          </div>
+          <form>
+            <div class="field">
+              <label for="a-user">帳號</label>
+              <input id="a-user" type="text" value="cheng.yt" autocomplete="username">
+            </div>
+            <div class="field">
+              <label for="a-pass">密碼</label>
+              <input id="a-pass" type="password" value="password" placeholder="請輸入密碼" autocomplete="current-password">
+            </div>
+            <button class="btn pri" type="button">登入</button>
+          </form>
+          <div class="sep"><span>偏好設定</span></div>
+          <div class="field" style="margin-bottom:10px">
+            <label>語系</label>
+            <div class="seg"><button class="on" type="button">繁中</button><button type="button">English</button></div>
+          </div>
+          <div class="field">
+            <label>色彩模式</label>
+            <div class="seg"><button class="on" type="button">淺色</button><button type="button">深色</button></div>
+          </div>
+          <div class="foot">連續 5 次輸入錯誤，帳號將鎖定 15 分鐘。遇到問題請聯絡倉管解鎖。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATE B · 登入失敗 -->
+    <section class="frame">
+      <div class="bar">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <span class="url">app://inventory.local / login</span>
+      </div>
+      <div class="fnote">狀態 B — 登入失敗（第 1 次 / 共 5 次）</div>
+      <div class="wrap">
+        <div class="card">
+          <div class="brand">
+            <span class="mk">庫</span>
+            <h2>庫存管理系統</h2>
+            <span>Inventory Management</span>
+          </div>
+          <form>
+            <div class="field">
+              <label for="b-user">帳號</label>
+              <input id="b-user" type="text" value="cheng.yt" autocomplete="username">
+            </div>
+            <div class="field">
+              <label for="b-pass">密碼</label>
+              <input id="b-pass" type="password" value="" placeholder="請重新輸入密碼" autocomplete="current-password" aria-invalid="true" aria-describedby="b-err">
+              <p class="err" id="b-err"><span class="dot"></span><span>帳號或密碼錯誤（1/5）。請確認帳號與密碼後重新輸入；連續 5 次輸入錯誤，帳號將鎖定 15 分鐘。</span></p>
+            </div>
+            <button class="btn pri" type="button">登入</button>
+          </form>
+          <div class="sep"><span>偏好設定</span></div>
+          <div class="field" style="margin-bottom:10px">
+            <label>語系</label>
+            <div class="seg"><button class="on" type="button">繁中</button><button type="button">English</button></div>
+          </div>
+          <div class="field">
+            <label>色彩模式</label>
+            <div class="seg"><button class="on" type="button">淺色</button><button type="button">深色</button></div>
+          </div>
+          <div class="foot">連續 5 次輸入錯誤，帳號將鎖定 15 分鐘。遇到問題請聯絡倉管解鎖。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATE C · 深色模式 -->
+    <section class="frame dark">
+      <div class="bar">
+        <span class="dots"><i></i><i></i><i></i></span>
+        <span class="url">app://inventory.local / login</span>
+      </div>
+      <div class="fnote">狀態 C — 深色模式（同一組語意角色的另一組取值）</div>
+      <div class="wrap">
+        <div class="card">
+          <div class="brand">
+            <span class="mk">庫</span>
+            <h2>庫存管理系統</h2>
+            <span>Inventory Management</span>
+          </div>
+          <form>
+            <div class="field">
+              <label for="c-user">帳號</label>
+              <input id="c-user" type="text" value="cheng.yt" autocomplete="username">
+            </div>
+            <div class="field">
+              <label for="c-pass">密碼</label>
+              <input id="c-pass" type="password" value="" placeholder="請重新輸入密碼" autocomplete="current-password" aria-invalid="true" aria-describedby="c-err">
+              <p class="err" id="c-err"><span class="dot"></span><span>帳號或密碼錯誤（1/5）。請確認帳號與密碼後重新輸入。</span></p>
+            </div>
+            <button class="btn pri" type="button">登入</button>
+          </form>
+          <div class="sep"><span>偏好設定</span></div>
+          <div class="field" style="margin-bottom:10px">
+            <label>語系</label>
+            <div class="seg"><button class="on" type="button">繁中</button><button type="button">English</button></div>
+          </div>
+          <div class="field">
+            <label>色彩模式</label>
+            <div class="seg"><button type="button">淺色</button><button class="on" type="button">深色</button></div>
+          </div>
+          <div class="foot">連續 5 次輸入錯誤，帳號將鎖定 15 分鐘。遇到問題請聯絡倉管解鎖。</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="legend">
+    <div><b>Governed by</b>EXPERIENCE.md § Information Architecture（登入列）、§ Voice and Tone（登入失敗）、§ State Patterns（登入失敗 / 帳號鎖定）、§ Component Patterns（語系切換）、§ Accessibility Floor　|　DESIGN.md § Colors、§ Typography、§ Shapes、§ Elevation &amp; Depth</div>
+    <div><b>Tokens</b>淺色：底 #F6F1E7 · 卡片 #FFFDF8 · 抬升 #FFFFFF · 邊框 #E0D6C2 · 主要 #8C4A0F · 危險 #A33524<br>深色：底 #14100B · 卡片 #1D1812 · 抬升 #262018 · 邊框 #3A3025 · 主要 #E09A4A · 危險 #E8776A</div>
+    <div><b>Notes</b>錯誤訊息以 aria-describedby 關聯欄位；狀態同時有文字（「帳號或密碼錯誤（1/5）」）而非只靠顏色；語系切換不重新整理頁面。</div>
+  </div>
+
+</div>
+</body>
+</html>

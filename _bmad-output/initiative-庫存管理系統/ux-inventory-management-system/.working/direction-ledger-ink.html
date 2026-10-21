@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>方向 B — Ledger Ink｜新增銷貨單</title>
+<style>
+/* ============================================================
+   DIRECTION B — LEDGER INK（深色帳冊）
+   色彩系統：
+   --ink-bg    #101317  應用程式底色（接近墨黑）
+   --ink-panel #171B21  面板表面
+   --ink-panel2#1D2229  表頭 / 次要區塊
+   --ink-line  #2A3038  1px 線條
+   --ink-line2 #232931  內部淡線
+   --paper     #ECE7DC  主要文字（暖米白，非純白）
+   --paper2    #A9B0B8  次要文字
+   --paper3    #6E767F  提示文字
+   --gold      #D9A441  主品牌／毛利強調色
+   --gold-w    #2A2415  強調底色
+   --jade      #6FBF9B  正向數值
+   --rust      #E0705F  錯誤數值
+   --amber     #E0B155  警告（成本未設定）
+   排版：標題使用襯線（Georgia / 新細明體），內文系統無襯線，數值等寬
+   ============================================================ */
+:root{
+  --ink-bg:#101317; --ink-panel:#171B21; --ink-panel2:#1D2229;
+  --ink-line:#2A3038; --ink-line2:#232931;
+  --paper:#ECE7DC; --paper2:#A9B0B8; --paper3:#6E767F;
+  --gold:#D9A441; --gold-w:#2A2415;
+  --jade:#6FBF9B; --rust:#E0705F; --amber:#E0B155;
+  --ui:"Microsoft JhengHei UI","Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,"Segoe UI",sans-serif;
+  --serif:Georgia,"Times New Roman","Songti TC","PMingLiU","Noto Serif TC",serif;
+  --mono:"Consolas","SFMono-Regular","Menlo","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0B0E11;color:var(--paper);font-family:var(--ui);font-size:13px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.page{max-width:1280px;margin:0 auto;padding:34px 28px 64px}
+.doc-head{margin-bottom:26px;border-bottom:1px solid #2A3038;padding-bottom:18px}
+.kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:var(--serif);font-size:26px;font-weight:600;letter-spacing:.01em;margin:8px 0 10px;color:#F5F1E8}
+.rationale{max-width:920px;color:var(--paper2);font-size:13.5px;line-height:1.8}
+.rationale strong{color:var(--paper)}
+.tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--ink-line);background:#14181D;color:var(--paper2);padding:4px 9px;border-radius:1px}
+.tag.gold{color:var(--gold);border-color:#4A3D1C;background:var(--gold-w)}
+
+/* browser */
+.frame{margin-top:30px;border:1px solid #2E353E;background:var(--ink-panel);box-shadow:0 24px 60px -30px #000}
+.bar{display:flex;align-items:center;gap:10px;background:#0D1013;border-bottom:1px solid var(--ink-line);padding:9px 13px}
+.dots{display:flex;gap:6px}
+.dots i{width:10px;height:10px;border-radius:50%;background:#313841;display:block}
+.url{flex:1;background:#12161A;border:1px solid var(--ink-line);border-radius:2px;font-family:var(--mono);font-size:11px;color:var(--paper3);padding:5px 10px}
+.url b{color:var(--paper)}
+.frame-note{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--paper3);padding:8px 14px;background:#12161A;border-bottom:1px solid var(--ink-line)}
+
+/* app */
+.app{display:grid;grid-template-columns:212px 1fr;min-height:680px}
+.rail{background:#0D1013;border-right:1px solid var(--ink-line);padding:18px 0;display:flex;flex-direction:column}
+.brand{padding:0 18px 16px;border-bottom:1px solid var(--ink-line)}
+.brand b{font-family:var(--serif);font-size:16px;color:#F3EFE5;display:block;letter-spacing:.03em}
+.brand span{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase}
+.rail nav{padding:12px 0;flex:1}
+.rail a{display:block;padding:8px 18px;color:var(--paper2);text-decoration:none;font-size:13px;position:relative;letter-spacing:.02em}
+.rail a:hover{color:var(--paper);background:#141920}
+.rail a.on{color:#F3EFE5;background:#182029}
+.rail a.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold)}
+.rail a i{font-family:var(--mono);font-style:normal;font-size:9.5px;color:var(--paper3);margin-left:8px;letter-spacing:.1em}
+.rail-foot{padding:14px 18px;border-top:1px solid var(--ink-line);font-size:11.5px;color:var(--paper3)}
+.rail-foot b{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--paper2);margin-bottom:3px}
+
+/* main */
+.main{background:var(--ink-bg);display:flex;flex-direction:column}
+.topbar{padding:14px 20px;border-bottom:1px solid var(--ink-line);display:flex;align-items:center;gap:16px;background:linear-gradient(180deg,#151A20,#11151A)}
+.crumb{font-size:11.5px;color:var(--paper3);letter-spacing:.03em}
+.crumb b{color:var(--paper2)}
+.topbar h2{font-family:var(--serif);font-size:21px;font-weight:600;margin-right:auto;letter-spacing:.04em}
+.topbar h2 small{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--gold);font-weight:400;margin-left:10px;text-transform:uppercase}
+.btn{font-family:var(--ui);font-size:12.5px;padding:7px 16px;border:1px solid var(--ink-line);background:#1B2128;color:var(--paper);border-radius:2px;cursor:default;letter-spacing:.03em}
+.btn.pri{background:var(--gold);border-color:var(--gold);color:#14100A;font-weight:700}
+.btn.ghost{background:transparent;color:var(--paper2)}
+.btnrow{display:flex;gap:8px}
+.content{padding:16px 20px;display:grid;grid-template-columns:1fr 286px;gap:16px;align-items:start}
+.card{background:var(--ink-panel);border:1px solid var(--ink-line);border-radius:2px}
+.card-hd{padding:10px 14px;border-bottom:1px solid var(--ink-line);background:var(--ink-panel2);display:flex;align-items:center;gap:12px}
+.card-hd h3{font-family:var(--serif);font-size:14.5px;font-weight:600;letter-spacing:.05em;color:#F1EDE3}
+.card-hd .sub{font-size:11px;color:var(--paper3)}
+.card-hd .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.mini{font-size:11px;border:1px solid var(--ink-line);background:#141920;border-radius:2px;padding:4px 9px;color:var(--paper2)}
+.mini.acc{color:var(--gold);border-color:#4A3D1C;background:var(--gold-w)}
+
+.meta{display:grid;grid-template-columns:repeat(4,1fr)}
+.meta div{padding:10px 14px;border-right:1px solid var(--ink-line2)}
+.meta div:last-child{border-right:0}
+.meta label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper3);margin-bottom:4px}
+.meta span{font-size:13px;color:var(--paper)}
+
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+thead th{background:#141920;border-bottom:1px solid var(--ink-line);font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper3);font-weight:500;text-align:left;padding:9px 10px}
+thead th.num{text-align:right}
+thead th.ctr{text-align:center}
+tbody td{padding:0;border-bottom:1px solid var(--ink-line2)}
+tbody tr:hover td{background:#141920}
+td .cell{padding:9px 10px;font-size:13px}
+td.num .cell{text-align:right;font-family:var(--mono);font-size:12.5px;letter-spacing:-.01em}
+td.ctr .cell{text-align:center}
+.mono{font-family:var(--mono)}
+.dim{color:var(--paper2)}
+.dim3{color:var(--paper3)}
+.in{border:1px solid #3A424C;background:#12161A;border-radius:2px;padding:5px 8px;font-family:var(--mono);font-size:12.5px;text-align:right;width:100%;color:var(--paper)}
+.in.focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(217,164,65,.16)}
+.chip{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;padding:3px 9px;border-radius:2px;border:1px solid;white-space:nowrap}
+.chip.warn{color:var(--amber);background:rgba(224,177,85,.10);border-color:rgba(224,177,85,.42)}
+.chip.err{color:var(--rust);background:rgba(224,112,95,.10);border-color:rgba(224,112,95,.42)}
+.chip.ok{color:var(--jade);background:rgba(111,191,155,.10);border-color:rgba(111,191,155,.38)}
+.chip.gold{color:var(--gold);background:var(--gold-w);border-color:#4A3D1C}
+.profit{color:var(--jade);font-weight:600}
+.row-note{padding:2px 10px 10px;font-size:11.5px;color:var(--amber);display:flex;gap:8px;align-items:baseline;line-height:1.5}
+.row-note b{font-weight:600;white-space:nowrap}
+tr.bad td{background:rgba(224,112,95,.06)}
+tr.bad td:first-child{box-shadow:inset 3px 0 0 var(--rust)}
+
+.pick{border-top:1px solid var(--ink-line);background:#14181E}
+.pick-hd{padding:10px 14px;border-bottom:1px solid var(--ink-line2);display:flex;gap:10px;align-items:center}
+.pick-hd h4{font-family:var(--serif);font-size:13.5px;font-weight:600;letter-spacing:.04em}
+.search{flex:1;border:1px solid var(--ink-line);background:#0F1216;border-radius:2px;padding:5px 10px;font-size:12.5px;color:var(--paper3)}
+.pick td .cell{padding:8px 10px;font-size:12.5px}
+.pick tfoot td{background:#141920;border-top:1px solid var(--ink-line);color:var(--paper2);font-size:11.5px}
+.pick tfoot td .cell{padding:8px 10px}
+
+.sum{position:sticky;top:16px}
+.sum .body{padding:12px 14px}
+.srow{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--ink-line2)}
+.srow:last-of-type{border-bottom:0}
+.srow label{font-size:12px;color:var(--paper2)}
+.srow span{font-family:var(--mono);font-size:14px}
+.srow.total span{font-size:17px;font-weight:700;color:#F5F1E8}
+.srow.gross{border-top:1px solid var(--ink-line);border-bottom:1px solid var(--ink-line);margin:6px -14px 0;padding:10px 14px}
+.gpanel{margin:12px 0;padding:14px;background:var(--gold-w);border:1px solid #4A3D1C;border-radius:2px}
+.gpanel label{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);display:block}
+.gpanel .val{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--gold);margin:6px 0 2px;letter-spacing:-.01em}
+.gpanel .val small{font-size:11px;font-weight:400;color:#B79B60;margin-left:6px}
+.gpanel .sub{font-size:11px;color:#9C8A5E;line-height:1.5}
+.alert{border:1px solid rgba(224,177,85,.42);background:rgba(224,177,85,.08);color:#E9C77F;border-radius:2px;padding:10px 12px;font-size:11.5px;line-height:1.55;margin-top:10px}
+.alert b{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;color:var(--amber)}
+.sum .foot{padding:12px 14px;border-top:1px solid var(--ink-line);display:flex;flex-direction:column;gap:8px;background:var(--ink-panel2)}
+.sum .foot .btn{width:100%;text-align:center}
+
+.empty{padding:44px 24px 50px;text-align:center}
+.empty .glyph{width:58px;height:58px;margin:0 auto 16px;border:1px solid #3A424C;border-radius:2px;display:grid;place-items:center;color:var(--gold);font-family:var(--serif);font-size:22px;background:#131820}
+.empty h4{font-family:var(--serif);font-size:17px;font-weight:600;margin-bottom:8px;color:#F3EFE5}
+.empty p{font-size:13px;color:var(--paper2);max-width:460px;margin:0 auto 8px;line-height:1.7}
+.empty ul{list-style:none;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0 18px}
+.empty li{font-family:var(--mono);font-size:11px;border:1px solid var(--ink-line);background:#141920;padding:5px 10px;color:var(--paper2)}
+.empty .acts{display:flex;gap:10px;justify-content:center}
+.filters{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;padding:12px 14px;border-bottom:1px solid var(--ink-line);background:#141920}
+.fg label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper3);margin-bottom:4px}
+.fg .box{border:1px solid var(--ink-line);background:#0F1216;border-radius:2px;padding:6px 10px;font-size:12.5px;color:var(--paper);min-width:160px}
+.fg .box.ph{color:var(--paper3)}
+.stat-strip{display:flex;border-bottom:1px solid var(--ink-line)}
+.stat-strip div{padding:9px 14px;border-right:1px solid var(--ink-line2)}
+.stat-strip label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--paper3)}
+.stat-strip b{font-family:var(--mono);font-size:15px;color:#F3EFE5}
+.legend{display:flex;gap:28px;flex-wrap:wrap;margin-top:24px;padding:16px 18px;background:var(--ink-panel);border:1px solid var(--ink-line);font-size:12px;color:var(--paper2);line-height:1.8}
+.legend b{color:var(--gold);font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;display:block;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="doc-head">
+    <div class="kicker">Direction B — Ledger Ink</div>
+    <h1>深色帳冊：讓金額在暗底上自成一格</h1>
+    <p class="rationale"><strong>方向說明：</strong>本方向把介面當成一本攤開的帳簿：墨黑底 (#101317)、暖米白字 (#ECE7DC)，標題改用襯線字體帶出財務語氣，唯一的品牌色是金銅 #D9A441，專門用來標示毛利這個核心指標。相較於方向 A 的高密度硬邊表格，這裡放寬列高與行距（9px padding）、改用深色低對比分隔線，資訊密度略降但聚焦更強，適合長時間盯著金額的操作情境。狀態以柔和發光邊框呈現，不使用紅色大面積警示，維持帳本式的克制。</p>
+    <div class="tags">
+      <span class="tag">密度 · 中高</span>
+      <span class="tag">字重 · 襯線標題 600 / 內文 400</span>
+      <span class="tag">邊界 · 1px 低對比線</span>
+      <span class="tag">登錄 · 財務帳冊</span>
+      <span class="tag gold">品牌色 · #D9A441</span>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="bar">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="url">app://inventory.local / sales / new　<b>新增銷貨單</b></div>
+    </div>
+    <div class="frame-note">HERO SCREEN — 新增銷貨單　|　狀態：成本未設定列（琥珀）＋ 可用數量不足列（磚紅）</div>
+    <div class="app">
+      <aside class="rail">
+        <div class="brand"><b>庫存管理系統</b><span>Inventory Ledger</span></div>
+        <nav>
+          <a href="#">庫存現況 <i>01</i></a>
+          <a href="#">商品主檔 <i>02</i></a>
+          <a href="#">採購與補貨 <i>03</i></a>
+          <a class="on" href="#">銷貨紀錄 <i>04</i></a>
+          <a href="#">異動紀錄 <i>05</i></a>
+        </nav>
+        <div class="rail-foot"><b>LOGIN</b>陳彥廷 · 業務部</div>
+      </aside>
+
+      <div class="main">
+        <div class="topbar">
+          <div class="crumb">銷貨紀錄 / <b>新增銷貨單</b></div>
+          <h2>新增銷貨單 <small>New Sale Order</small></h2>
+          <div class="btnrow">
+            <button class="btn">儲存草稿</button>
+            <button class="btn ghost">離開</button>
+          </div>
+        </div>
+
+        <div class="content">
+          <div>
+            <div class="card">
+              <div class="card-hd">
+                <h3>單據基本資料</h3>
+                <span class="sub">SO-2026-0148 · 2026-10-21</span>
+                <div class="right"><span class="mini">台北三越股份有限公司</span><span class="mini">交貨 2026-10-24</span></div>
+              </div>
+              <div class="meta">
+                <div><label>Customer / 客戶</label><span>台北三越股份有限公司</span></div>
+                <div><label>Sales Rep / 業務員</label><span>陳彥廷</span></div>
+                <div><label>Payment / 付款條件</label><span>月結 30 天</span></div>
+                <div><label>Warehouse / 出貨倉</label><span class="mono">B 倉</span></div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:16px">
+              <div class="card-hd">
+                <h3>銷貨明細</h3>
+                <span class="sub">2 個品項</span>
+                <div class="right"><span class="mini">折扣依單品計算</span><button class="mini acc">加入商品</button></div>
+              </div>
+              <table>
+                <colgroup>
+                  <col style="width:12%"><col style="width:17%"><col style="width:11%"><col style="width:10%">
+                  <col style="width:8%"><col style="width:9%"><col style="width:8%"><col style="width:12%"><col style="width:13%">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th>
+                    <th class="num">數量</th><th class="num">單價</th><th class="num">折扣</th><th class="num">小計</th><th class="num">毛利</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="mono"><div class="cell">INV-000128</div></td>
+                    <td><div class="cell">六角螺絲 M8×40</div></td>
+                    <td><div class="cell dim">B 倉 A-03</div></td>
+                    <td class="num"><div class="cell dim">可售 240</div></td>
+                    <td class="num"><div class="cell"><span class="in focus">100</span></div></td>
+                    <td class="num"><div class="cell"><span class="in">12.50</span></div></td>
+                    <td class="num"><div class="cell"><span class="in">5%</span></div></td>
+                    <td class="num"><div class="cell">1,187.50</div></td>
+                    <td class="num"><div class="cell"><span class="chip ok">毛利 375.00</span></div></td>
+                  </tr>
+                  <tr>
+                    <td class="mono"><div class="cell">INV-000201</div></td>
+                    <td><div class="cell">棉手套 L</div></td>
+                    <td><div class="cell dim">C 倉 B-11</div></td>
+                    <td class="num"><div class="cell dim">可售 60</div></td>
+                    <td class="num"><div class="cell"><span class="in">40</span></div></td>
+                    <td class="num"><div class="cell"><span class="in">85.00</span></div></td>
+                    <td class="num"><div class="cell dim3">—</div></td>
+                    <td class="num"><div class="cell">3,400.00</div></td>
+                    <td class="num"><div class="cell"><span class="chip warn">成本未設定</span></div></td>
+                  </tr>
+                  <tr>
+                    <td colspan="9" style="padding:0">
+                      <div class="row-note"><b>此商品無入庫成本</b><span>INV-000201 尚未設定入庫成本，請於「商品主檔」補建成本後再提交此銷貨單。</span></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="pick">
+                <div class="pick-hd">
+                  <h4>加入商品</h4>
+                  <span class="search">搜尋商品編號或名稱</span>
+                  <span class="mini">僅顯示可售數量 &gt; 0</span>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width:13%">商品編號</th><th style="width:22%">商品名稱</th><th style="width:13%">庫存位置</th>
+                      <th style="width:13%" class="num">可用數量</th><th style="width:14%" class="num">參考單價</th>
+                      <th style="width:13%">狀態</th><th style="width:12%"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="mono"><div class="cell">INV-000077</div></td>
+                      <td><div class="cell">尼龍束線帶 4×200mm</div></td>
+                      <td><div class="cell dim">A 倉 C-02</div></td>
+                      <td class="num"><div class="cell dim">可售 1,200</div></td>
+                      <td class="num"><div class="cell">3.80</div></td>
+                      <td><div class="cell"><span class="chip gold">可加入</span></div></td>
+                      <td><div class="cell"><span class="mini">加入</span></div></td>
+                    </tr>
+                    <tr class="bad">
+                      <td class="mono"><div class="cell">INV-000355</div></td>
+                      <td><div class="cell">鍍鋅角碼 50×50</div></td>
+                      <td><div class="cell dim">B 倉 A-11</div></td>
+                      <td class="num"><div class="cell">可售 12</div></td>
+                      <td class="num"><div class="cell">46.00</div></td>
+                      <td><div class="cell"><span class="chip err">可用數量不足</span></div></td>
+                      <td><div class="cell dim3">—</div></td>
+                    </tr>
+                    <tr>
+                      <td class="mono"><div class="cell">INV-000460</div></td>
+                      <td><div class="cell">軸承承座 SNL 517</div></td>
+                      <td><div class="cell dim">D 倉 A-07</div></td>
+                      <td class="num"><div class="cell dim">可售 36</div></td>
+                      <td class="num"><div class="cell">128.00</div></td>
+                      <td><div class="cell"><span class="chip gold">可加入</span></div></td>
+                      <td><div class="cell"><span class="mini">加入</span></div></td>
+                    </tr>
+                  </tbody>
+                  <tfoot><tr><td colspan="7"><div class="cell">符合條件的品項 3 筆，其中 1 筆可用數量不足，請調整數量或改採分批出貨。</div></td></tr></tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <aside class="card sum">
+            <div class="card-hd"><h3>摘要</h3><span class="sub">即時計算</span></div>
+            <div class="body">
+              <div class="srow"><label>原價合計</label><span>4,587.50</span></div>
+              <div class="srow"><label>折扣</label><span>5%</span></div>
+              <div class="srow total"><label>折後金額</label><span>4,358.13</span></div>
+              <div class="srow"><label>稅別</label><span class="dim3">內含稅</span></div>
+              <div class="gpanel">
+                <label>Gross Margin / 毛利</label>
+                <div class="val">375.00<small>NTD</small></div>
+                <div class="sub">毛利率 8.6%　·　僅計入已設定成本的品項</div>
+              </div>
+              <div class="alert">
+                <b>毛利將為負值</b>
+                INV-000201 無入庫成本，本單毛利尚未計入此品項，數值可能不正確。
+              </div>
+            </div>
+            <div class="foot">
+              <button class="btn pri">提交銷貨單</button>
+              <button class="btn">儲存草稿</button>
+              <button class="btn ghost">離開</button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="bar">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="url">app://inventory.local / stock / search　<b>庫存查詢清單</b></div>
+    </div>
+    <div class="frame-note">SECONDARY SCREEN — 庫存查詢清單　|　狀態：查無符合資料（空狀態）</div>
+    <div class="app">
+      <aside class="rail">
+        <div class="brand"><b>庫存管理系統</b><span>Inventory Ledger</span></div>
+        <nav>
+          <a class="on" href="#">庫存現況 <i>01</i></a>
+          <a href="#">商品主檔 <i>02</i></a>
+          <a href="#">採購與補貨 <i>03</i></a>
+          <a href="#">銷貨紀錄 <i>04</i></a>
+          <a href="#">異動紀錄 <i>05</i></a>
+        </nav>
+        <div class="rail-foot"><b>LOGIN</b>陳彥廷 · 業務部</div>
+      </aside>
+      <div class="main">
+        <div class="topbar">
+          <div class="crumb">庫存現況 / <b>庫存查詢清單</b></div>
+          <h2>庫存查詢清單 <small>Stock Query</small></h2>
+          <div class="btnrow"><button class="btn">匯出 CSV</button></div>
+        </div>
+        <div class="content" style="grid-template-columns:1fr">
+          <div class="card">
+            <div class="card-hd"><h3>查詢條件</h3><span class="sub">查詢時間 2026-10-21 09:12</span></div>
+            <div class="filters">
+              <div class="fg"><label>商品名稱</label><div class="box">軸承承座</div></div>
+              <div class="fg"><label>庫存位置</label><div class="box">D 倉</div></div>
+              <div class="fg"><label>可用數量</label><div class="box ph">全部</div></div>
+              <div class="fg"><label>供應商</label><div class="box ph">全部</div></div>
+              <button class="btn pri">查詢</button>
+              <button class="btn">清除篩選</button>
+            </div>
+            <div class="stat-strip">
+              <div><label>符合筆數</label><b>0</b></div>
+              <div><label>合計可用數量</label><b>—</b></div>
+              <div><label>合計庫存金額</label><b>—</b></div>
+              <div><label>低於安全庫存</label><b>—</b></div>
+            </div>
+            <table>
+              <colgroup><col style="width:13%"><col style="width:22%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
+              <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">安全庫存</th><th class="num">單位成本</th><th class="num">庫存金額</th></tr></thead>
+            </table>
+            <div class="empty">
+              <div class="glyph">∅</div>
+              <h4>查無符合資料</h4>
+              <p>目前條件下沒有庫存項目。請移除「庫存位置 = D 倉」或放寬商品名稱後重新查詢。</p>
+              <ul><li>商品名稱：軸承承座</li><li>庫存位置：D 倉</li><li>可用數量：全部</li></ul>
+              <div class="acts">
+                <button class="btn pri">清除篩選並重新查詢</button>
+                <button class="btn">前往採購與補貨</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div><b>Design Tokens</b>底色 #101317 · 面板 #171B21 · 線條 #2A3038<br>文字 #ECE7DC / #A9B0B8 / #6E767F<br>金銅 #D9A441 · 玉 #6FBF9B · 琥珀 #E0B155 · 磚紅 #E0705F</div>
+    <div><b>Type Scale</b>標題 Georgia / 新細明體 600 21px<br>區塊標題 14.5px 600 · 內文 13px · 數值 mono 12.5–26px</div>
+    <div><b>Interaction Implication</b>金色 = 品牌與毛利唯一強調色 · 焦點框為金色光暈<br>狀態以邊框色 + 微弱底色呈現，不使用大面積色塊</div>
+  </div>
+
+</div>
+</body>
+</html>

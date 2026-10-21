@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>方向 C — Bright Workbench｜新增銷貨單</title>
+<style>
+/* ============================================================
+   DIRECTION C — BRIGHT WORKBENCH（明亮工作台）
+   色彩系統：
+   --bg        #F6F7F9  應用程式底色
+   --card      #FFFFFF  卡片表面
+   --card2     #FAFBFC  次要區塊表面
+   --line      #E6E8EC  分隔線
+   --line2     #F0F2F5  內部淡線
+   --ink       #12161C  主要文字
+   --ink2      #5B6472  次要文字
+   --ink3      #98A1AE  提示文字
+   --blue      #2563EB  品牌 / 主要動作
+   --blue-50   #EFF4FF  強調底色
+   --blue-200  #C7D7FE  強調邊框
+   --green     #0E9F6E  正向（毛利）
+   --green-50  #E7F7F1
+   --amber     #B45309  警告（成本未設定）
+   --amber-50  #FEF6E7
+   --amber-200 #F5D9A8
+   --red       #DC2626  錯誤
+   --red-50    #FEF2F2
+   排版：14px 內文、20px 標題 700、膠囊型 chip、10px 圓角卡片 + 柔和陰影
+   ============================================================ */
+:root{
+  --bg:#F6F7F9; --card:#FFFFFF; --card2:#FAFBFC;
+  --line:#E6E8EC; --line2:#F0F2F5;
+  --ink:#12161C; --ink2:#5B6472; --ink3:#98A1AE;
+  --blue:#2563EB; --blue-50:#EFF4FF; --blue-200:#C7D7FE;
+  --green:#0E9F6E; --green-50:#E7F7F1;
+  --amber:#B45309; --amber-50:#FEF6E7; --amber-200:#F5D9A8;
+  --red:#DC2626; --red-50:#FEF2F2;
+  --ui:"Microsoft JhengHei UI","Microsoft JhengHei","PingFang TC","Noto Sans TC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Consolas","SFMono-Regular","Menlo","DejaVu Sans Mono",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#EDEFF3;color:var(--ink);font-family:var(--ui);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.page{max-width:1300px;margin:0 auto;padding:36px 28px 64px}
+.doc-head{margin-bottom:28px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}
+h1{font-size:26px;font-weight:700;letter-spacing:-.01em;margin:8px 0 10px}
+.rationale{max-width:900px;color:var(--ink2);font-size:14.5px;line-height:1.8}
+.rationale strong{color:var(--ink)}
+.tags{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:12px;border:1px solid var(--line);background:#fff;color:var(--ink2);padding:5px 12px;border-radius:999px}
+.tag.b{color:var(--blue);border-color:var(--blue-200);background:var(--blue-50)}
+
+.frame{margin-top:32px;background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(18,22,28,.05),0 24px 50px -28px rgba(18,22,28,.35)}
+.bar{display:flex;align-items:center;gap:12px;background:#EFF1F4;padding:10px 16px;border-bottom:1px solid var(--line)}
+.dots{display:flex;gap:6px}
+.dots i{width:11px;height:11px;border-radius:50%;background:#C9CFD6;display:block}
+.url{flex:1;background:#fff;border:1px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:12px;color:var(--ink3);padding:6px 12px}
+.url b{color:var(--ink2)}
+.frame-note{font-size:12px;color:var(--ink3);padding:9px 18px;background:var(--card2);border-bottom:1px solid var(--line);letter-spacing:.02em}
+.frame-note b{color:var(--ink2);font-weight:600}
+
+/* app chrome */
+.appbar{background:#fff;border-bottom:1px solid var(--line);padding:0 22px;display:flex;align-items:center;gap:26px;height:56px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;letter-spacing:.01em}
+.brand .mk{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#2563EB,#7C3AED);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700}
+.tabs{display:flex;gap:4px;margin-left:8px}
+.tabs a{padding:8px 14px;border-radius:8px;color:var(--ink2);text-decoration:none;font-size:13.5px}
+.tabs a:hover{background:var(--bg);color:var(--ink)}
+.tabs a.on{background:var(--blue-50);color:var(--blue);font-weight:600}
+.who{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink2)}
+.avatar{width:30px;height:30px;border-radius:50%;background:#E4E9F2;color:#3B4A63;display:grid;place-items:center;font-weight:600;font-size:12px}
+
+.main{background:var(--bg);padding:22px}
+.pagehead{display:flex;align-items:flex-end;gap:16px;margin-bottom:18px}
+.pagehead h2{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.pagehead .sub{font-size:13px;color:var(--ink3);margin-top:2px}
+.btnrow{margin-left:auto;display:flex;gap:10px}
+.btn{font-family:var(--ui);font-size:13.5px;font-weight:500;padding:9px 18px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink2);cursor:default}
+.btn:hover{border-color:#D3D8DE}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600;box-shadow:0 6px 16px -8px rgba(37,99,235,.9)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:5px 12px;font-size:12.5px;border-radius:7px}
+
+.layout{display:grid;grid-template-columns:1fr 296px;gap:20px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 2px rgba(18,22,28,.04)}
+.card-hd{padding:15px 18px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:10px}
+.card-hd h3{font-size:15px;font-weight:600}
+.card-hd .sub{font-size:12.5px;color:var(--ink3)}
+.card-hd .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.pill{font-size:12px;padding:4px 10px;border-radius:999px;background:var(--bg);color:var(--ink2);border:1px solid var(--line)}
+
+.kv{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line2)}
+.kv div{padding:13px 18px;border-right:1px solid var(--line2)}
+.kv div:last-child{border-right:0}
+.kv label{display:block;font-size:11.5px;color:var(--ink3);margin-bottom:3px}
+.kv span{font-size:14px;font-weight:500}
+
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+thead th{background:var(--card2);border-bottom:1px solid var(--line);font-size:12px;font-weight:600;color:var(--ink2);text-align:left;padding:11px 12px;white-space:nowrap}
+thead th.num{text-align:right}
+tbody td{padding:0;border-bottom:1px solid var(--line2)}
+tbody tr:last-child td{border-bottom:0}
+td .cell{padding:11px 12px;font-size:13.5px}
+td.num .cell{text-align:right;font-family:var(--mono);font-size:13px;letter-spacing:-.01em}
+td .cell.sub{font-size:12.5px;color:var(--ink3)}
+.mono{font-family:var(--mono)}
+.in{border:1px solid var(--line);background:#fff;border-radius:7px;padding:6px 9px;font-family:var(--mono);font-size:13px;text-align:right;width:100%;color:var(--ink)}
+.in.focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-50)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:3px 10px;border-radius:999px;border:1px solid;white-space:nowrap}
+.chip.ok{color:var(--green);background:var(--green-50);border-color:#B7E4D2}
+.chip.warn{color:var(--amber);background:var(--amber-50);border-color:var(--amber-200)}
+.chip.err{color:var(--red);background:var(--red-50);border-color:#F5C2C2}
+.chip.idle{color:var(--ink2);background:var(--bg);border-color:var(--line)}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:block}
+tr.bad td{background:#FFFBFB}
+tr.bad td:first-child{box-shadow:inset 3px 0 0 var(--red)}
+.note{padding:0 12px 12px;font-size:12.5px;color:var(--amber);line-height:1.6}
+.note b{font-weight:600}
+
+.picker{margin-top:20px}
+.searchbar{display:flex;gap:10px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line2)}
+.field{flex:1;display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:9px;padding:8px 12px;background:#fff;color:var(--ink3);font-size:13px}
+.field .k{font-size:11.5px;color:var(--ink3);border-right:1px solid var(--line);padding-right:8px}
+.picker td .cell{padding:9px 12px;font-size:13px}
+.picker tfoot td{background:var(--card2);color:var(--ink2);font-size:12.5px;border-top:1px solid var(--line)}
+.picker tfoot td .cell{padding:10px 12px}
+
+/* summary */
+.sum{position:sticky;top:20px}
+.sum .body{padding:16px 18px}
+.srow{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0}
+.srow+.srow{border-top:1px dashed var(--line)}
+.srow label{font-size:13px;color:var(--ink2)}
+.srow span{font-family:var(--mono);font-size:14.5px}
+.srow.big span{font-size:19px;font-weight:700;letter-spacing:-.02em}
+.gcard{margin:12px 0 14px;border-radius:12px;padding:16px 18px;background:linear-gradient(140deg,#EFF4FF,#F6F0FF);border:1px solid var(--blue-200)}
+.gcard .lab{font-size:12px;color:#44507A;letter-spacing:.04em}
+.gcard .val{font-family:var(--mono);font-size:32px;font-weight:700;color:#1B3E8F;letter-spacing:-.02em;margin:2px 0 2px}
+.gcard .val small{font-size:13px;font-weight:500;color:#5A6796;margin-left:6px}
+.gcard .sub{font-size:12px;color:#5A6796}
+.callout{border-radius:10px;padding:11px 13px;font-size:12.5px;line-height:1.6;background:var(--amber-50);border:1px solid var(--amber-200);color:#8A4708}
+.callout b{display:block;margin-bottom:2px;font-weight:600}
+.sum .foot{padding:14px 18px 18px;display:flex;flex-direction:column;gap:9px;border-top:1px solid var(--line2)}
+.sum .foot .btn{width:100%;text-align:center}
+
+/* empty state */
+.empty{padding:52px 24px 56px;text-align:center}
+.empty .art{display:flex;gap:8px;justify-content:center;margin-bottom:20px}
+.empty .art i{width:34px;height:44px;border-radius:6px;background:#EEF1F6;display:block;box-shadow:inset 0 0 0 1px #E0E5EC}
+.empty .art i:nth-child(2){height:56px;background:var(--blue-50);box-shadow:inset 0 0 0 1px var(--blue-200)}
+.empty h4{font-size:17px;font-weight:600;margin-bottom:8px}
+.empty p{font-size:13.5px;color:var(--ink2);max-width:470px;margin:0 auto 16px;line-height:1.75}
+.empty ul{list-style:none;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.empty li{font-size:12.5px;border:1px solid var(--line);background:var(--card2);padding:5px 12px;border-radius:999px;color:var(--ink2)}
+.empty .acts{display:flex;gap:10px;justify-content:center}
+.filters{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;padding:16px 18px;border-bottom:1px solid var(--line2)}
+.fg label{display:block;font-size:12px;color:var(--ink3);margin-bottom:5px}
+.fg .box{border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:13px;color:var(--ink);min-width:170px;background:#fff}
+.fg .box.ph{color:var(--ink3)}
+.stat-strip{display:flex;border-bottom:1px solid var(--line2)}
+.stat-strip div{padding:12px 18px;border-right:1px solid var(--line2)}
+.stat-strip label{display:block;font-size:12px;color:var(--ink3)}
+.stat-strip b{font-family:var(--mono);font-size:16px}
+.legend{display:flex;gap:30px;flex-wrap:wrap;margin-top:26px;padding:18px 22px;background:#fff;border-radius:14px;border:1px solid var(--line);font-size:13px;color:var(--ink2);line-height:1.9}
+.legend b{color:var(--ink);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="doc-head">
+    <div class="kicker">Direction C — Bright Workbench</div>
+    <h1>明亮工作台：把複雜單據拆成幾個看得懂的方塊</h1>
+    <p class="rationale"><strong>方向說明：</strong>這個方向走現代 SaaS 路線：頂部頁籤取代側邊欄、卡片化區塊、10px 圓角與柔和陰影，14px 的字級與 11px 儲存格內距讓密集資料仍然好讀。品牌色是一個明確但不刺眼的藍 #2563EB，毛利另外使用漸層卡片強調，讓最重要的數字不需要靠粗體也能跳出來。相較於方向 A 的工業感與方向 B 的帳冊感，本方向更接近新世代商用軟體，適合作為對外示範與新人學習的介面。</p>
+    <div class="tags">
+      <span class="tag">密度 · 中</span>
+      <span class="tag">字重 · 600 標題 / 400 內文</span>
+      <span class="tag">邊界 · 12px 圓角 + 陰影</span>
+      <span class="tag">登錄 · 現代商用軟體</span>
+      <span class="tag b">品牌色 · #2563EB</span>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="bar">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="url">app://inventory.local / sales / new　<b>新增銷貨單</b></div>
+    </div>
+    <div class="frame-note">HERO SCREEN — <b>新增銷貨單</b>　|　狀態：成本未設定列（琥珀 chip）＋ 可用數量不足列</div>
+    <div class="appbar">
+      <div class="brand"><span class="mk">庫</span>庫存管理系統</div>
+      <nav class="tabs">
+        <a href="#">庫存現況</a>
+        <a href="#">商品主檔</a>
+        <a href="#">採購與補貨</a>
+        <a class="on" href="#">銷貨紀錄</a>
+        <a href="#">異動紀錄</a>
+      </nav>
+      <div class="who"><span>LOGIN　陳彥廷</span><span class="avatar">陳</span></div>
+    </div>
+
+    <div class="main">
+      <div class="pagehead">
+        <div>
+          <h2>新增銷貨單</h2>
+          <div class="sub">草稿編號 SO-2026-0148 · 建立於 2026-10-21 09:12 · 2 個品項</div>
+        </div>
+        <div class="btnrow">
+          <button class="btn">儲存草稿</button>
+          <button class="btn ghost">離開</button>
+          <button class="btn pri">提交銷貨單</button>
+        </div>
+      </div>
+
+      <div class="layout">
+        <div>
+          <div class="card">
+            <div class="card-hd"><h3>單據基本資料</h3><span class="sub">必填欄位已填妥</span></div>
+            <div class="kv">
+              <div><label>客戶</label><span>台北三越股份有限公司</span></div>
+              <div><label>業務員</label><span>陳彥廷</span></div>
+              <div><label>付款條件</label><span>月結 30 天</span></div>
+              <div><label>出貨倉</label><span class="mono">B 倉</span></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:20px">
+            <div class="card-hd">
+              <h3>銷貨明細</h3>
+              <span class="pill">2 個品項</span>
+              <div class="right"><span class="pill">折扣依單品計算</span><button class="btn sm">加入商品</button></div>
+            </div>
+            <table>
+              <colgroup>
+                <col style="width:12%"><col style="width:17%"><col style="width:11%"><col style="width:10%">
+                <col style="width:8%"><col style="width:9%"><col style="width:8%"><col style="width:12%"><col style="width:13%">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th>
+                  <th class="num">數量</th><th class="num">單價</th><th class="num">折扣</th><th class="num">小計</th><th class="num">毛利</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono"><div class="cell">INV-000128</div></td>
+                  <td><div class="cell">六角螺絲 M8×40</div></td>
+                  <td><div class="cell sub">B 倉 A-03</div></td>
+                  <td class="num"><div class="cell sub">可售 240</div></td>
+                  <td class="num"><div class="cell"><span class="in focus">100</span></div></td>
+                  <td class="num"><div class="cell"><span class="in">12.50</span></div></td>
+                  <td class="num"><div class="cell"><span class="in">5%</span></div></td>
+                  <td class="num"><div class="cell">1,187.50</div></td>
+                  <td class="num"><div class="cell"><span class="chip ok"><i class="dot"></i>毛利 375.00</span></div></td>
+                </tr>
+                <tr>
+                  <td class="mono"><div class="cell">INV-000201</div></td>
+                  <td><div class="cell">棉手套 L</div></td>
+                  <td><div class="cell sub">C 倉 B-11</div></td>
+                  <td class="num"><div class="cell sub">可售 60</div></td>
+                  <td class="num"><div class="cell"><span class="in">40</span></div></td>
+                  <td class="num"><div class="cell"><span class="in">85.00</span></div></td>
+                  <td class="num"><div class="cell sub">—</div></td>
+                  <td class="num"><div class="cell">3,400.00</div></td>
+                  <td class="num"><div class="cell"><span class="chip warn"><i class="dot"></i>成本未設定</span></div></td>
+                </tr>
+                <tr>
+                  <td colspan="9" style="padding:0">
+                    <div class="note"><b>此商品無入庫成本</b>INV-000201 尚未設定入庫成本，請於「商品主檔」補建成本後再提交此銷貨單。</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card picker">
+            <div class="searchbar">
+              <div class="field"><span class="k">商品</span>搜尋商品編號或名稱，例如 INV-000355</div>
+              <div class="field" style="flex:0 0 150px"><span class="k">倉別</span>全部</div>
+              <button class="btn sm">查詢</button>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:14%">商品編號</th><th style="width:24%">商品名稱</th><th style="width:14%">庫存位置</th>
+                  <th style="width:14%" class="num">可用數量</th><th style="width:14%" class="num">參考單價</th>
+                  <th style="width:13%">狀態</th><th style="width:7%"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="mono"><div class="cell">INV-000077</div></td>
+                  <td><div class="cell">尼龍束線帶 4×200mm</div></td>
+                  <td><div class="cell sub">A 倉 C-02</div></td>
+                  <td class="num"><div class="cell sub">可售 1,200</div></td>
+                  <td class="num"><div class="cell">3.80</div></td>
+                  <td><div class="cell"><span class="chip idle">可加入</span></div></td>
+                  <td><div class="cell"><button class="btn sm">加入</button></div></td>
+                </tr>
+                <tr class="bad">
+                  <td class="mono"><div class="cell">INV-000355</div></td>
+                  <td><div class="cell">鍍鋅角碼 50×50</div></td>
+                  <td><div class="cell sub">B 倉 A-11</div></td>
+                  <td class="num"><div class="cell">可售 12</div></td>
+                  <td class="num"><div class="cell">46.00</div></td>
+                  <td><div class="cell"><span class="chip err"><i class="dot"></i>可用數量不足</span></div></td>
+                  <td><div class="cell sub">—</div></td>
+                </tr>
+                <tr>
+                  <td class="mono"><div class="cell">INV-000460</div></td>
+                  <td><div class="cell">軸承承座 SNL 517</div></td>
+                  <td><div class="cell sub">D 倉 A-07</div></td>
+                  <td class="num"><div class="cell sub">可售 36</div></td>
+                  <td class="num"><div class="cell">128.00</div></td>
+                  <td><div class="cell"><span class="chip idle">可加入</span></div></td>
+                  <td><div class="cell"><button class="btn sm">加入</button></div></td>
+                </tr>
+              </tbody>
+              <tfoot><tr><td colspan="7"><div class="cell">符合條件的品項 3 筆，其中 1 筆可用數量不足，請調整數量或改採分批出貨。</div></td></tr></tfoot>
+            </table>
+          </div>
+        </div>
+
+        <aside class="card sum">
+          <div class="card-hd"><h3>摘要</h3><span class="pill">即時計算</span></div>
+          <div class="body">
+            <div class="srow"><label>原價合計</label><span>4,587.50</span></div>
+            <div class="srow"><label>折扣</label><span>5%</span></div>
+            <div class="srow big"><label>折後金額</label><span>4,358.13</span></div>
+            <div class="srow"><label>稅別</label><span class="mono" style="color:var(--ink3)">內含稅</span></div>
+            <div class="gcard">
+              <div class="lab">毛利 Gross Margin</div>
+              <div class="val">375.00<small>NTD</small></div>
+              <div class="sub">毛利率 8.6%　·　僅計入已設定成本的品項</div>
+            </div>
+            <div class="callout"><b>毛利將為負值</b>INV-000201 無入庫成本，本單毛利尚未計入此品項，數值可能不正確。</div>
+          </div>
+          <div class="foot">
+            <button class="btn pri">提交銷貨單</button>
+            <button class="btn">儲存草稿</button>
+            <button class="btn ghost">離開</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="bar">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="url">app://inventory.local / stock / search　<b>庫存查詢清單</b></div>
+    </div>
+    <div class="frame-note">SECONDARY SCREEN — <b>庫存查詢清單</b>　|　狀態：查無符合資料（空狀態）</div>
+    <div class="appbar">
+      <div class="brand"><span class="mk">庫</span>庫存管理系統</div>
+      <nav class="tabs">
+        <a class="on" href="#">庫存現況</a>
+        <a href="#">商品主檔</a>
+        <a href="#">採購與補貨</a>
+        <a href="#">銷貨紀錄</a>
+        <a href="#">異動紀錄</a>
+      </nav>
+      <div class="who"><span>LOGIN　陳彥廷</span><span class="avatar">陳</span></div>
+    </div>
+    <div class="main">
+      <div class="pagehead">
+        <div>
+          <h2>庫存查詢清單</h2>
+          <div class="sub">查詢時間 2026-10-21 09:12 · 依商品編號、庫存位置與供應商篩選</div>
+        </div>
+        <div class="btnrow"><button class="btn">匯出 CSV</button></div>
+      </div>
+      <div class="card">
+        <div class="filters">
+          <div class="fg"><label>商品名稱</label><div class="box">軸承承座</div></div>
+          <div class="fg"><label>庫存位置</label><div class="box">D 倉</div></div>
+          <div class="fg"><label>可用數量</label><div class="box ph">全部</div></div>
+          <div class="fg"><label>供應商</label><div class="box ph">全部</div></div>
+          <button class="btn pri">查詢</button>
+          <button class="btn">清除篩選</button>
+        </div>
+        <div class="stat-strip">
+          <div><label>符合筆數</label><b>0</b></div>
+          <div><label>合計可用數量</label><b>—</b></div>
+          <div><label>合計庫存金額</label><b>—</b></div>
+          <div><label>低於安全庫存</label><b>—</b></div>
+        </div>
+        <table>
+          <colgroup><col style="width:13%"><col style="width:22%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"><col style="width:13%"></colgroup>
+          <thead><tr><th>商品編號</th><th>商品名稱</th><th>庫存位置</th><th class="num">可用數量</th><th class="num">安全庫存</th><th class="num">單位成本</th><th class="num">庫存金額</th></tr></thead>
+        </table>
+        <div class="empty">
+          <div class="art"><i></i><i></i><i></i></div>
+          <h4>查無符合資料</h4>
+          <p>目前條件下沒有庫存項目。請移除「庫存位置 = D 倉」或放寬商品名稱後重新查詢。</p>
+          <ul><li>商品名稱：軸承承座</li><li>庫存位置：D 倉</li><li>可用數量：全部</li></ul>
+          <div class="acts">
+            <button class="btn pri">清除篩選並重新查詢</button>
+            <button class="btn">前往採購與補貨</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div><b>Design Tokens</b>底色 #F6F7F9 · 卡片 #FFFFFF · 線條 #E6E8EC<br>文字 #12161C / #5B6472 / #98A1AE<br>藍 #2563EB · 綠 #0E9F6E · 琥珀 #B45309 · 紅 #DC2626</div>
+    <div><b>Type Scale</b>頁標題 22px 700 · 區塊 15px 600 · 內文 13.5–14px<br>數值 mono 13px · 標籤 11.5px</div>
+    <div><b>Interaction Implication</b>膠囊 chip + 圓點狀態 · 焦點為藍框加柔光<br>主要動作置於頁首右側，右欄摘要可捲動停留</div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,92 @@
+# E1 平台基線、帳號與角色權限 — story 拆解（build order）
+# 表格順序是建置順序，不是 id。id 永久有效，不重用。
+# 排序決定（2026-10-21，使用者）：tracer bullet 後接「最不確定」的守衛規則基線，
+# 其前置「測試紀律」一併提前，形成安全網 → 高風險規則 → 可見進展的順序。
+
+[[entry]]
+id = 1
+type = "story"
+title = "專案骨架與第一次連線打通"
+description = "建立 Django 專案與四層 settings（base／dev／test／prod，prod 缺 SECRET_KEY 或允許主機即啟動失敗）、以 PGPASSFILE 連 AILearn、第一組 migration、core/exceptions.py 與單一 DRF exception handler（錯誤一律回 {code, detail, field_errors}）、/api/v1/health 端點、Vite + React + TS + Tailwind + shadcn 前端骨架與應用外框（側欄依角色顯隱、頂列含語系切換與使用者選單、登出）、以 zh-TW／en-US 起步的 message catalog、WhiteNoise 靜態檔與 waitress 啟動方式；所有資料存取以參數化查詢書寫。"
+verify = "開發者啟動後端與前端後，開啟前端首頁可看到後端回應的版本字串，切換語系會改變畫面文字；改以 waitress 啟動並 build 前端後開啟首頁，同樣看得到版本字串。"
+covers = []
+after = []
+hitl = true
+risk = "medium"
+
+[[entry]]
+id = 7
+type = "story"
+title = "測試紀律與固定測試資料集"
+description = "建立 pytest + pytest-django + factory_boy、獨立測試資料庫設定（測試不得連 AILearn）、帳面等式測試骨架，以及專案測試規範文件供後續 epic 沿用（AD-14）。"
+verify = "測試在獨立資料庫跑完且完全不連 AILearn；帳面等式測試骨架可對任意商品驗證 入庫 − 領用 − 調出 + 調入 − 銷貨 = 0。"
+covers = []
+after = [1]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 6
+type = "story"
+title = "操作人員機制與共用守衛規則基線"
+description = "交付 R3：actor 為 use case 的顯式參數（禁 thread-local），view 必須傳登入者帳號代號作為 actor，紀錄上保存帳號代號快照（AD-32）；於 core 建立共用守衛規則基線——交易邊界、僅追加、庫存不為負、銷售扣減唯一入口、跨倉變動必須有調貨單，以規則介面交付、不建庫存表（實體套用於 E3/E4）；並建立日誌基線（request id、actor id、use case 名稱，不記錄憑證）。"
+verify = "以 core 層守衛規則與測試替身驗證：非銷貨單的銷售用途扣減被拒絕、無調貨單的跨倉異動被拒絕、庫存不會變負、交易中途失敗整筆回滾、交易類資料的 update/delete 在 manager 層被封鎖且不使用 is_active 軟刪除；另以帶 actor 的寫入 use case 驗證紀錄的 actor 快照非空且等於登入者，停用帳號後既有紀錄的 actor 快照不變。"
+covers = ["R3"]
+after = [1, 7]
+hitl = false
+risk = "high"
+
+[[entry]]
+id = 2
+type = "story"
+title = "登入、登出與未認證處理"
+description = "交付 R1 的帳號密碼登入部分：以 session + CSRF 完成登入與登出（AD-6），密碼以 Django 預設雜湊器儲存且禁用可降級演算法（AD-6）；/api/v1/* 未認證回 401 且 body 為 AD-7 錯誤包絡（code 例如 auth.unauthenticated），由前端導向 /login 並記錄 return_to，登入後回到原頁；建立 /login 登入頁（依 DESIGN.md 登入表單與 EXPERIENCE.md 登入表單行為，含失敗次數與鎖定狀態呈現）。"
+verify = "以有效帳號登入成功並看到自己的角色；登出後再請求受保護端點得到 401 並被導回登入頁，return_to 保留原路徑。"
+covers = ["R1"]
+after = [1]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 3
+type = "story"
+title = "登入失敗計數與帳號鎖定"
+description = "交付 R1 的錯誤處理與鎖定部分：失敗計數存於 DB，同一帳號第 5 次失敗鎖定 15 分鐘（UTC 計算）；帳號不存在與密碼錯誤回應同一訊息「帳號或密碼錯誤」與同一碼 auth.invalid_credentials（不透露帳號是否存在），已鎖定回應 auth.locked 並顯示剩餘鎖定時間。"
+verify = "連續 5 次密碼錯誤後，即使密碼正確也無法登入，直到鎖定期滿；查詢不存在的帳號與查詢錯誤密碼得到相同訊息與相同錯誤碼。"
+covers = ["R1"]
+after = [2]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 4
+type = "story"
+title = "四種角色權限與越權拒絕"
+description = "交付 R2：把 PRD FR-2 權限矩陣的全部列展開為 permission codename，集中於 core/permissions.py 宣告（含 E2～E4 模組的列，view 宣告所需權限的動作由各 epic 落地）；越權請求回 403 與統一錯誤包絡；會計角色唯讀；並以 seed 產生四種角色各一個測試帳號。"
+verify = "四種角色各有一個測試帳號可登入並取得符合其角色的權限集合；以會計角色呼叫任一寫入端點被拒絕，以採購角色呼叫倉管端點被拒絕，角色允許的操作則成功。"
+covers = ["R2"]
+after = [2]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 5
+type = "story"
+title = "帳號生命週期"
+description = "交付 R20：倉管可建立帳號、指派四種角色之一、停用帳號並重設密碼；停用帳號不可再登入，帳號及其既有關聯資料保留不刪；建立 /admin/accounts 帳號與角色頁（表格 + 抽屜編輯、角色四選一單選、停用需二次確認對話框）。"
+verify = "倉管建立帳號並指派角色後該帳號可登入；重設密碼後舊密碼失效且下次登入須改密；停用帳號後登入被拒絕，而其既有資料不被刪除。"
+covers = ["R20"]
+after = [4]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 8
+type = "story"
+title = "Refactor sweep"
+description = "依 E1 各 story 的計畫與審查結果做清理：重複程式碼、命名不一致、廢棄的相容層；只整理不新增功能。"
+verify = "清理後測試全數通過且對外行為不變。"
+covers = []
+after = [1, 2, 3, 4, 5, 6, 7]
+hitl = false
+risk = "low"
