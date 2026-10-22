@@ -306,3 +306,126 @@ export async function createInbound(input: {
   const payload = await postJson<{ movement: Movement }>("/stock/inbound", input);
   return payload.movement;
 }
+
+// ---------------------------------------------------------------------------
+// 銷貨單與毛利
+// ---------------------------------------------------------------------------
+
+export interface QuoteLine {
+  item_code: string;
+  item_name: string;
+  location_code: string;
+  quantity: number;
+  unit_price: string;
+  subtotal: string;
+  cost: string;
+  consumptions: {
+    po_number: string;
+    quantity: number;
+    unit_price: string;
+    cost: string;
+  }[];
+}
+
+export interface QuoteResult {
+  lines: QuoteLine[];
+  total_amount: string;
+  discount_rate: string;
+  discount_amount: string;
+  total_paid: string;
+  total_cost: string;
+  total_margin: string;
+}
+
+export interface SalesOrderLineView {
+  item_code: string;
+  item_name: string;
+  location_code: string;
+  quantity: number;
+  unit_price: string;
+  subtotal: string;
+  cost: string;
+  consumptions: {
+    po_number: string;
+    quantity: number;
+    unit_price: string;
+    cost: string;
+  }[];
+}
+
+export interface SalesOrderView {
+  order_no: string;
+  status: string;
+  status_label: string;
+  discount_rate: string;
+  total_amount: string;
+  discount_amount: string;
+  total_paid: string;
+  total_cost: string;
+  total_margin: string;
+  created_by: string;
+  created_at: string;
+  submitted_at: string | null;
+  note: string;
+  lines: SalesOrderLineView[];
+}
+
+export async function quoteOrder(
+  lines: { item_code: string; location_code: string; quantity: number; unit_price?: string }[],
+  discountRate: number,
+): Promise<QuoteResult> {
+  return postJson<QuoteResult>("/sales/quote", { lines, discount_rate: discountRate });
+}
+
+export async function fetchSalesOrders(params: {
+  order_no?: string;
+  date_from?: string;
+  date_to?: string;
+} = {}): Promise<SalesOrderView[]> {
+  const query = new URLSearchParams();
+  if (params.order_no) query.set("order_no", params.order_no);
+  if (params.date_from) query.set("date_from", params.date_from);
+  if (params.date_to) query.set("date_to", params.date_to);
+  const suffix = query.toString() ? `?${query.toString()}` : "";
+  const payload = await apiFetch<{ orders: SalesOrderView[] }>(`/sales/orders${suffix}`);
+  return payload.orders;
+}
+
+export async function createSalesOrder(input: {
+  lines: { item_code: string; location_code: string; quantity: number; unit_price?: string }[];
+  discount_rate: number;
+  note?: string;
+}): Promise<SalesOrderView> {
+  const payload = await postJson<{ order: SalesOrderView }>("/sales/orders", input);
+  return payload.order;
+}
+
+export async function submitSalesOrder(orderNo: string): Promise<SalesOrderView> {
+  const payload = await postJson<{ order: SalesOrderView }>(
+    `/sales/orders/${encodeURIComponent(orderNo)}/submit`,
+    {},
+  );
+  return payload.order;
+}
+
+export async function reverseSalesOrder(orderNo: string): Promise<SalesOrderView> {
+  const payload = await postJson<{ order: SalesOrderView }>(
+    `/sales/orders/${encodeURIComponent(orderNo)}/reverse`,
+    {},
+  );
+  return payload.order;
+}
+
+export async function fetchMargins(params: {
+  order_no?: string;
+  date_from?: string;
+  date_to?: string;
+} = {}): Promise<SalesOrderView[]> {
+  const query = new URLSearchParams();
+  if (params.order_no) query.set("order_no", params.order_no);
+  if (params.date_from) query.set("date_from", params.date_from);
+  if (params.date_to) query.set("date_to", params.date_to);
+  const suffix = query.toString() ? `?${query.toString()}` : "";
+  const payload = await apiFetch<{ orders: SalesOrderView[] }>(`/sales/margins${suffix}`);
+  return payload.orders;
+}

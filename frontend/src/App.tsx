@@ -8,20 +8,28 @@ import { useI18n } from "./i18n";
 import { CatalogPage } from "./pages/CatalogPage";
 import { HomePage } from "./pages/HomePage";
 import { InboundPage } from "./pages/InboundPage";
+import { LoginPage } from "./pages/LoginPage";
+import { MarginPage } from "./pages/MarginPage";
 import { RolePickerPage } from "./pages/RolePickerPage";
+import { SalesPage } from "./pages/SalesPage";
 import { StockPage } from "./pages/StockPage";
 
 export default function App() {
   const { t } = useI18n();
   const { user, status } = useAuth();
   const [activeKey, setActiveKey] = useState("dashboard");
+  const [showRolePicker, setShowRolePicker] = useState(false);
 
-  // 未登入時顯示登入頁；載入中先留白避免閃爍。
+  // 未登入時顯示登入頁（可切到「選職能直接進入」）；載入中先留白避免閃爍。
   if (status === "loading") {
     return <div className="min-h-screen bg-background" />;
   }
   if (!user) {
-    return <RolePickerPage />;
+    return showRolePicker ? (
+      <RolePickerPage />
+    ) : (
+      <LoginPage onPickRole={() => setShowRolePicker(true)} />
+    );
   }
 
   // 側邊導覽依角色顯示（EXPERIENCE.md：無權限的項目不顯示）。
@@ -41,6 +49,10 @@ export default function App() {
         return <InboundPage />;
       case "stock":
         return <StockPage />;
+      case "sales":
+        return <SalesPage />;
+      case "margins":
+        return <MarginPage />;
       case "dashboard":
         return <HomePage />;
       default:

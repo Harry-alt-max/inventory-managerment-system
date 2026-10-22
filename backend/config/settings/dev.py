@@ -11,6 +11,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "[::1]",
     "0.0.0.0",  # noqa: S104 - 僅開發環境的 runserver 便利設定
+    ".trycloudflare.com",  # 僅開發環境：允許 Cloudflare Quick Tunnel 轉入（Django 6.x 前導點＝含子網域）
 ]
 
 # 開發時 Django 應能顯示除錯頁面，但不得洩漏憑證
@@ -22,6 +23,7 @@ INTERNAL_IPS = ["127.0.0.1"]
 CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:5173",
+    "https://*.trycloudflare.com",  # 僅開發環境：Cloudflare Quick Tunnel
 ]
 
 # 示範模式：允許「選角色直接進入」（POST /api/v1/auth/login-as）。

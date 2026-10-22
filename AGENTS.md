@@ -106,6 +106,7 @@ psql -U postgres -d '"AILearn"' -h localhost
 | 檔案 | 說明 |
 |------|------|
 | `PostgreSQL使用說明.md` | 給人看的 PostgreSQL 設定與操作說明 |
+| `Cloudflare Tunnel使用說明.md` | 內網穿透（Quick Tunnel／具名 Tunnel）設定與安全注意事項 |
 
 ---
 

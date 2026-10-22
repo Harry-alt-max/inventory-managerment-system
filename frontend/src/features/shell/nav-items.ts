@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Boxes, LayoutDashboard, Package, PackagePlus, Receipt, Settings, Users } from "lucide-react";
+import { Boxes, Calculator, LayoutDashboard, Package, PackagePlus, Receipt, Settings, Users } from "lucide-react";
 
 import type { MessageKey } from "../../i18n";
 
@@ -61,7 +61,15 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: "nav.sales",
     icon: Receipt,
     group: "management",
-    implemented: false,
+    implemented: true,
+    roles: ["sales"],
+  },
+  {
+    key: "margins",
+    labelKey: "nav.margins",
+    icon: Calculator,
+    group: "management",
+    implemented: true,
     roles: ["sales", "accounting"],
   },
   {

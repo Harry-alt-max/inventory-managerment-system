@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     "accounts",
     "catalog",
     "stock",
+    "sales",
 ]
 
 MIDDLEWARE = [

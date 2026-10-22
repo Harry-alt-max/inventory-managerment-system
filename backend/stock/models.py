@@ -39,11 +39,15 @@ class StockMovement(models.Model):
     PURPOSE_ISSUE = "issue"
     PURPOSE_TRANSFER_OUT = "transfer_out"
     PURPOSE_TRANSFER_IN = "transfer_in"
+    PURPOSE_SALE = "sale"
+    PURPOSE_SALE_REVERSAL = "sale_reversal"
     PURPOSE_CHOICES = [
         (PURPOSE_INBOUND, "入庫"),
         (PURPOSE_ISSUE, "領用"),
         (PURPOSE_TRANSFER_OUT, "移轉出"),
         (PURPOSE_TRANSFER_IN, "移轉入"),
+        (PURPOSE_SALE, "銷貨出庫"),
+        (PURPOSE_SALE_REVERSAL, "銷貨沖銷回庫"),
     ]
 
     item = models.ForeignKey(Item, on_delete=models.PROTECT, related_name="movements")
