@@ -30,8 +30,13 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
 ]
 
-# 郵件不外寄
-EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+# 郵件不外寄：留在記憶體（django.core.mail.outbox）
+# Django 6.1 起以 MAILERS 取代 EMAIL_BACKEND（EMAIL_* 於 Django 2028 移除）
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.locmem.EmailBackend",
+    }
+}
 
 # 靜態檔案不需雜湊
 STORAGES = {

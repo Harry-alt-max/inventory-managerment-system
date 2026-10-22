@@ -133,6 +133,52 @@ DATABASES = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ---------------------------------------------------------------------------
+# 電子郵件（Resend）
+# ---------------------------------------------------------------------------
+# 寄信一律走 Resend 的 SMTP 端點：主機 ``smtp.resend.com``、帳號固定是
+# ``resend``，密碼就是 Resend API key。憑證只從環境變數注入，不寫進任何
+# 檔案（AD-15：Never — 不把憑證、密碼或金鑰寫進任何檔案）。
+#
+# Django 6.1 起以 ``MAILERS`` 取代 ``EMAIL_BACKEND``／``EMAIL_*``
+# （``EMAIL_*`` 將於 Django 2028 移除），因此這裡設定 ``MAILERS``。
+#
+# 沒有 ``RESEND_API_KEY`` 時改用 console backend：開發環境沒有 Resend 帳號
+# 也能正常運作（寄出的內容印在伺服器輸出），`core.email` 會另外記錄警告。
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "").strip()
+RESEND_FROM_EMAIL = os.environ.get(
+    "RESEND_FROM_EMAIL", "noreply@example.com"
+).strip()
+#: 預設寄件人（``EmailMessage`` 未指定 from_email 時使用）
+DEFAULT_FROM_EMAIL = RESEND_FROM_EMAIL
+#: 系統通知的預設收件者（逗號分隔的環境變數；不在程式碼或資料庫寫死）
+NOTIFY_EMAILS = [
+    address.strip()
+    for address in os.environ.get("NOTIFY_EMAILS", "").split(",")
+    if address.strip()
+]
+
+if RESEND_API_KEY:
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+            "OPTIONS": {
+                "host": "smtp.resend.com",
+                "port": 587,
+                "username": "resend",
+                "password": RESEND_API_KEY,
+                "use_tls": True,
+                "timeout": 10,
+            },
+        }
+    }
+else:
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.console.EmailBackend",
+        }
+    }
+
+# ---------------------------------------------------------------------------
 # 國際化與時區（AD-10：儲存 UTC、顯示 Asia/Taipei）
 # ---------------------------------------------------------------------------
 LANGUAGE_CODE = "zh-hant"

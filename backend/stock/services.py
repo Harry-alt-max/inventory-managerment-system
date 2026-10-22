@@ -5,6 +5,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from catalog.models import Batch, Item, Location
+from core.email import send_notification
 from core.exceptions import Conflict, InsufficientStock, ResourceNotFound, ValidationFailed
 
 from .models import StockLevel, StockMovement
@@ -83,7 +84,42 @@ def receive_stock(
         occurred_at=timezone.now(),
         note=note or "",
     )
+
+    # 入庫通知信：交易提交後才寄，避免交易回滾卻已寄信（transaction.on_commit）
+    transaction.on_commit(
+        lambda: _notify_inbound(
+            actor=actor,
+            item_name=item.name,
+            item_code=item.item_code,
+            location_code=location.code,
+            batch_po_number=batch.po_number,
+            quantity=quantity,
+        )
+    )
     return movement
+
+
+def _notify_inbound(
+    *,
+    actor: str,
+    item_name: str,
+    item_code: str,
+    location_code: str,
+    batch_po_number: str,
+    quantity: int,
+) -> None:
+    """寄出入庫通知信；寄信失敗不影響入庫結果（見 ``core.email``）。"""
+    body = (
+        f"商品：{item_name}（{item_code}）\n"
+        f"庫位：{location_code}\n"
+        f"批次：{batch_po_number}\n"
+        f"數量：{quantity}\n"
+        f"操作人：{actor}\n"
+    )
+    send_notification(
+        subject=f"[庫存管理系統] 入庫通知：{item_name} × {quantity}",
+        body=body,
+    )
 
 
 def list_stock(query: str = "") -> list[StockLevel]:

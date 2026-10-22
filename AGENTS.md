@@ -69,6 +69,18 @@ psql -U postgres -d '"AILearn"' -h localhost
 
 ## 技術規範與注意事項
 
+### 外部服務環境變數（憑證一律只走環境變數）
+
+| 變數 | 用途 |
+|------|------|
+| `PGPASSFILE` | PostgreSQL 憑證檔路徑（已設定） |
+| `RESEND_API_KEY` | Resend 寄信 API key（**未設定時系統不會寄信**，只記錄） |
+| `RESEND_FROM_EMAIL` | 預設寄件人 |
+| `NOTIFY_EMAILS` | 系統通知的預設收件者（逗號分隔） |
+
+> 憑證**不可**寫進任何檔案（`base.py`、`.env`、文件、版控）。
+> 寄信一律經由 `backend/core/email.py`（唯一寄信入口）。
+
 ### PowerShell 環境陷阱（務必注意）
 1. **引號處理**：PowerShell 傳參數給外部程式時，引號容易被吃掉。
    - 需要傳入含大寫的識別字時，使用 `'"AILearn"'`（外單內雙）
@@ -107,6 +119,7 @@ psql -U postgres -d '"AILearn"' -h localhost
 |------|------|
 | `PostgreSQL使用說明.md` | 給人看的 PostgreSQL 設定與操作說明 |
 | `Cloudflare Tunnel使用說明.md` | 內網穿透（Quick Tunnel／具名 Tunnel）設定與安全注意事項 |
+| `Resend整合說明.md` | 電子郵件通知（Resend）架構、環境變數與驗證方式 |
 
 ---
 
